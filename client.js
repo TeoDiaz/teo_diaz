@@ -11,10 +11,10 @@ router.post("/", (req, res, next) => {
   axios
     .post("http://teo_diaz_messageapp_1:3000/message", { destination, body })
     .then(response => {
-      res.send(`${response.data}`);
+      res.status(200).send(`${response.data}`);
     })
     .catch(err => {
-      console.log(err);
+     res.status(500).send(`There was an Error: ${err}`)
     });
 });
 
