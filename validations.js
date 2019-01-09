@@ -11,7 +11,7 @@ const validated = (req, res) => {
     return false;
   } else if (destination.length > 50 || body.length > 100) {
     res
-      .status(400)
+      .status(413)
       .send("Destination name or message text had exceed the length limit");
     return false;
   } else {
