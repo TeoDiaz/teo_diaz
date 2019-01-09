@@ -1,6 +1,6 @@
-#MessageApp
+# MessageApp
 ***
-####This is the definitive guide to use this amazing API
+#### This is the definitive guide to use this amazing API
  
 Send all request to: 
 ```
@@ -9,15 +9,16 @@ http://<localhost:9001/messages>
 *Methods:*
 
 ```
-method: post
+Method: post
 Content-Type: 'application/json'
-request: 
+Request: 
 {
   "destination": "STRING",
   "body": "STRING"
 }
 
 Required: Yes
+
 Max length:
   "destination" = 50 characters
   "body" = 100 characters
@@ -47,7 +48,3 @@ Status 500:
 ```
 Internal Server error
 ```
-
-
-
-
