@@ -5,7 +5,7 @@ Client("1","get","messages")
 Client("2","post","messages","5000",{destination:"User1", message:"Hello World"})
 //OK
 Client("3","post","messages","5000",{destination:"User1", body:"Hello World"})
-//Any response
+//Timeout
 Client("4","post","newPath","5000",{destination:"User1", message:"Hello World"})
 //Error 404
 Client("5","post","messages","5000",{destination:"", message:""})
@@ -13,11 +13,12 @@ Client("5","post","messages","5000",{destination:"", message:""})
 Client("6","put","messages","5000",{destination:"User1", message:"Hello World"})
 //Error 404
 Client("7","post","messages","5000")
-//Any response
+//Timeout
 
 let message;
 for(let i=0;i<1000000;i++){
   message+="C"
 }
+
 Client("8","post","messages","100000",{destination:"User1", message})
-//OK, sometimes Error 500
+//OK, sometimes Error 413, to large.
