@@ -11,10 +11,7 @@ app.get("/", (req, res) => {
 });
 
 app.post("/messages", (req, res) => {
-  const { destination, body } = req.body;
-  if (destination == "" || body == "") {
-   res.status(400).send("You must provide a valid destination and a valid body")
-  } else {
+  if (validated(req,res)){
     sendMessage(req)
       .then(response => res.status(200).send(`${response.data}`))
       .catch(err =>
@@ -26,3 +23,13 @@ app.post("/messages", (req, res) => {
 app.listen(9001, () => {
   console.log("I'm ready on port 9001!");
 });
+
+const validated = ((req, res) => {
+  const { destination, body } = req.body;
+  if (destination == "" || destination == Number || body == "" || body == Number) {
+   res.status(400).send("You must provide a valid destination and a valid message")
+   return false
+   }else{
+     return true
+   }
+})

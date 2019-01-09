@@ -6,6 +6,10 @@
   "scripts": {
     "start": "index.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:TeoDiaz/teo_diaz.git"
+  },
   "license": "MIT",
   "dependencies": {
     "axios": "^0.18.0",
