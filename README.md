@@ -4,7 +4,7 @@
  
 Send all request to: 
 ```
-http://<localhost:9001/messages>
+http://localhost:9001/messages
 ```
 *Methods:*
 
@@ -37,6 +37,9 @@ Status 200:
 ```
 OK
 ```
+
+*ERRORS:* 
+
 Status 400:
 ```
 You can't provide an empty field
