@@ -4,12 +4,22 @@
  
 Send all request to: 
 ```
-http://localhost:9001/messages
+http://localhost:9001
 ```
 *Methods:*
 
 ```
+Method: get
+```
+*Response*
+
+Status 200:
+```
+This is my first, 'Hello World'
+```
+
 Method: post
+Path: /messages
 Content-Type: 'application/json'
 Request: 
 {
@@ -50,4 +60,7 @@ Destination name or message text had exceed the length limit
 Status 500:
 ```
 Internal Server error
+
+
+
 ```
