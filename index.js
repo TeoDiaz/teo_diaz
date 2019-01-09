@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const sendMessage = require("./sendMessage");
+const validated = require('./validations')
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -24,12 +25,3 @@ app.listen(9001, () => {
   console.log("I'm ready on port 9001!");
 });
 
-const validated = ((req, res) => {
-  const { destination, body } = req.body;
-  if (destination == "" || destination == Number || body == "" || body == Number) {
-   res.status(400).send("You must provide a valid destination and a valid message")
-   return false
-   }else{
-     return true
-   }
-})
