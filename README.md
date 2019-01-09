@@ -17,7 +17,7 @@ Status 200:
 ```
 This is my first, 'Hello World'
 ```
-
+```
 Method: post
 Path: /messages
 Content-Type: 'application/json'
@@ -60,7 +60,4 @@ Destination name or message text had exceed the length limit
 Status 500:
 ```
 Internal Server error
-
-
-
 ```
