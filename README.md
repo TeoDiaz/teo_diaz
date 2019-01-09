@@ -4,7 +4,7 @@
  
 Send all request to: 
 ```
-http://<localhost:9001/messages>
+http://localhost:9001/messages
 ```
 *Methods:*
 
