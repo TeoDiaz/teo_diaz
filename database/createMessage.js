@@ -1,4 +1,4 @@
-const Message = require('./Models/Message')
+const Message = require('../Models/Message')
 
 const createMessage = (destination, body, sent) =>{
   return new Message ({

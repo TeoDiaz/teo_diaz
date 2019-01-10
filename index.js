@@ -3,21 +3,30 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
-const sendMessage = require("./sendMessage");
 const validated = require("./validations");
-const connection = require("./database");
-const createMessage = require("./createMessage");
+const connection = require("./database/database");
+const createMessage = require("./database/createMessage");
+const takeMessages = require("./database/takeMessages")
+const sendMessage = require("./sendMessage");
+
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 setTimeout(function() {
   connection();
-}, 1000);
+}, 2000);
 
 app.get("/", (req, res) => {
-  res.send("This is my first, 'Hello World'");
+  res.status(200).send("This is my first, 'Hello World'");
 });
+
+app.get("/messages", (req,res)=>{
+  takeMessages().then(messages=>{
+    res.status(200).send(messages)
+  })
+})
+
 
 app.post("/messages", (req, res) => {
   const { destination, body } = req.body;
@@ -31,9 +40,8 @@ app.post("/messages", (req, res) => {
       })
       .catch(err => {
         createMessage(destination, body, false).then(message => {
-          console.log("Error saving on DataBase");
+          console.log("Error sending Message");
         });
-
         res.status(err.response.status).send(err);
       });
   }
