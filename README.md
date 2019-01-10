@@ -13,7 +13,7 @@ http://localhost:9001
 |   Get| /  |  This is my first, 'Hello World' |   |  
 |   Get| /messages  | All messages on DataBase 
 
-|  Method | Path  | Content-Type  |  Required|
+|  Method | Path  | Content-Type  |  Request Required|
 |---|---|---|---|
 | Post  |  /messages | 'application/json'  |Yes
 
