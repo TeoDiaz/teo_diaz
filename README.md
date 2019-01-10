@@ -9,12 +9,12 @@ http://localhost:9001
 *Methods:*
 
 |  Method | Path  | Response  |   
-|---|---|---|---|---|
+|---|---|---|
 |   Get| /  |  This is my first, 'Hello World' |   |  
 |   Get| /messages  | All messages on DataBase 
 
 |  Method | Path  | Content-Type  |  Required|
-|---|---|---|---|---|
+|---|---|---|---|
 | Post  |  /messages | 'application/json'  |Yes
 
 <details open><summary> Post Request Details</summary> 
