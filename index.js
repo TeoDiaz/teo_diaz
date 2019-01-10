@@ -6,27 +6,29 @@ const bodyParser = require("body-parser");
 const validated = require("./validations");
 const connection = require("./database/database");
 const createMessage = require("./database/createMessage");
-const takeMessages = require("./database/takeMessages")
+const takeMessages = require("./database/takeMessages");
 const sendMessage = require("./sendMessage");
-
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 setTimeout(function() {
   connection();
-}, 2000);
+}, 3000);
 
 app.get("/", (req, res) => {
   res.status(200).send("This is my first, 'Hello World'");
 });
 
-app.get("/messages", (req,res)=>{
-  takeMessages().then(messages=>{
-    res.status(200).send(messages)
-  })
-})
-
+app.get("/messages", (req, res) => {
+  takeMessages()
+    .then(messages => {
+      res.status(200).send(messages);
+    })
+    .catch(err => {
+      res.status(500).send(`There was an ${err}`);
+    });
+});
 
 app.post("/messages", (req, res) => {
   const { destination, body } = req.body;
