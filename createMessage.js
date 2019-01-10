@@ -9,4 +9,3 @@ const createMessage = (destination, body, sent) =>{
 }
 
 module.exports = createMessage
-
