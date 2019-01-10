@@ -6,16 +6,14 @@ Send all request to:
 ```
 http://localhost:9001
 ```
-*Methods:*
+*Paths:*
 
-|  Method | Path  | Response  |   
-|---|---|---|
-|   Get| /  |  This is my first, 'Hello World' |   |  
-|   Get| /messages  | All messages on DataBase 
+|  Path | Method  | Response  | Content-type|  Request Required|
+|---|---|---|---|---|
+|   /| Get  |  This is my first, 'Hello World' | | No   
+|   /messages| Get  | All messages on DataBase ||No
+| /messages  |  Post | OK |'application/json'  |Yes
 
-|  Method | Path  | Content-Type  |  Request Required|
-|---|---|---|---|
-| Post  |  /messages | 'application/json'  |Yes
 
 <details open><summary> Post Request Details</summary> 
 
