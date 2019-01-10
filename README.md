@@ -11,7 +11,7 @@ http://localhost:9001
 ```
 Method: get
 ```
-*Response*
+*Response:*
 
 Status 200:
 ```
