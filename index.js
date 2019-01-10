@@ -23,7 +23,11 @@ app.get("/", (req, res) => {
 app.get("/messages", (req, res) => {
   takeMessages()
     .then(messages => {
-      res.status(200).send(messages);
+      if (messages.length == 0) {
+        res.status(500).send("DataBase is empty");
+      } else {
+        res.status(200).send(messages);
+      }
     })
     .catch(err => {
       res.status(500).send(`There was an ${err}`);
