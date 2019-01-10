@@ -10,7 +10,8 @@ const connection = require('./database')
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-connection()
+setTimeout(function(){ connection() }, 1000);
+
 app.get("/", (req, res) => {
   res.send("This is my first, 'Hello World'");
 });
