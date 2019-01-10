@@ -1,10 +1,11 @@
 const Message = require('../Models/Message')
 
-const createMessage = (destination, body, sent) =>{
+const createMessage = (destination, body, sent,confirm) =>{
   return new Message ({
     destination,
     body,
-    sent
+    sent,
+    confirm
   }).save()
 }
 
