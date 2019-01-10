@@ -45,16 +45,15 @@ app.post("/messages", (req, res) => {
         res.status(200).send(`${response.data}`);
       })
       .catch(err => {
-        if (err.response.status == 504) {
+        if (err.response == undefined) {
           createMessage(destination, body, true, false).then(message => {
-            console.log("Message send but not confirmated");
+            res.status(504).send("Timeout");
           });
         } else {
           createMessage(destination, body, false).then(message => {
-            console.log("Error sending Message");
+            res.status(`${err.response.status}`).send("Error sending message");
           });
         }
-        res.status(err.response.status).send(err);
       });
   }
 });
