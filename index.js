@@ -3,11 +3,11 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
-const validated = require("./validations");
-const connection = require("./database/connect");
-const createMessage = require("./database/createMessage");
-const takeMessages = require("./database/takeMessages");
-const sendMessage = require("./sendMessage");
+const validated = require("./src/controllers/validations");
+const connection = require("./src/database/connect");
+const createMessage = require("./src/database/saveMessage");
+const getMessages = require("./src/database/getMessages");
+const sendMessage = require("./src/controllers/sendMessage");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -21,7 +21,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/messages", (req, res) => {
-  takeMessages()
+  getMessages()
     .then(messages => {
       if (messages.length == 0) {
         res.status(500).send("DataBase is empty");
