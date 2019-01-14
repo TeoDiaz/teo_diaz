@@ -14,6 +14,9 @@ const checkCredit = require("./src/controllers/checkCredit");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+let locks = require('locks');
+let mutex = locks.createMutex();
+
 // setTimeout(function() {
 //   connection();
 // }, 3000);
