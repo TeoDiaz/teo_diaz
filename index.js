@@ -8,6 +8,7 @@ const connection = require("./src/database/connect");
 const createMessage = require("./src/database/saveMessage");
 const getMessages = require("./src/database/getMessages");
 const sendMessage = require("./src/controllers/sendMessage");
+const updateCredit = require("./src/database/updateCredit");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -57,6 +58,14 @@ app.post("/messages", (req, res) => {
       });
   }
 });
+
+app.post("/credit", (req, res) => {
+  updateCredit(req)
+  .then(credit=>{
+    res.send(credit)
+  })
+});
+
 const { PORT } = process.env;
 
 app.listen(PORT, () => {
