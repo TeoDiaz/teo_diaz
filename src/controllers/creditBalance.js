@@ -12,6 +12,11 @@ const creditBalance = {
     Credit.findOneAndUpdate({}, { $inc: { amount:-1 } }, { new: true }).then(credit=>{
      console.log("You paid 1€ for our services, thx")
     });
+  },
+  creditReturn: ()=>{
+    Credit.findOneAndUpdate({}, { $inc: { amount:1 } }, { new: true }).then(credit=>{
+      console.log("Credit returned to your account, sorry for the inconvenience")
+     });
   }
 };
 

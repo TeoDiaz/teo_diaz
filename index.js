@@ -14,7 +14,7 @@ const checkCredit = require("./src/controllers/checkCredit");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-let locks = require('locks');
+let locks = require("locks");
 let mutex = locks.createMutex();
 
 // setTimeout(function() {
@@ -41,53 +41,62 @@ app.get("/messages", (req, res) => {
 });
 
 app.post("/messages", (req, res) => {
-  checkCredit().then(result => {
-    if (result) {
-      const { destination, body } = req.body;
-      if (validated(destination, body, res)) {
-        creditBalance.decrease();
-        sendMessage(destination, body)
-          .then(response => {
-            createMessage(destination, body, true).then(message => {
-              console.log("Message saved on DataBase");
+  mutex.lock(function() {
+    checkCredit().then(result => {
+      if (result) {
+        const { destination, body } = req.body;
+        if (validated(destination, body, res)) {
+          creditBalance.decrease();
+          sendMessage(destination, body)
+            .then(response => {
+              createMessage(destination, body, true).then(message => {
+                console.log("Message saved on DataBase");
+              });
+              res.status(200).send(`${response.data}`);
+            })
+            .catch(err => {
+              if (err.response == undefined) {
+                createMessage(destination, body, true, false).then(message => {
+                  res.status(504).send("Timeout");
+                });
+              } else {
+                creditBalance.creditReturn()
+                createMessage(destination, body, false).then(message => {
+                  res
+                    .status(`${err.response.status}`)
+                    .send("Error sending message");
+                });
+              }
             });
-            res.status(200).send(`${response.data}`);
-          })
-          .catch(err => {
-            if (err.response == undefined) {
-              createMessage(destination, body, true, false).then(message => {
-                res.status(504).send("Timeout");
-              });
-            } else {
-              createMessage(destination, body, false).then(message => {
-                res
-                  .status(`${err.response.status}`)
-                  .send("Error sending message");
-              });
-            }
-          });
+        }
+      } else {
+        res.status(400).send("No credit avalible");
       }
-    }else{
-      res.status(400).send("No credit avalible")
-    }
+    });
+    mutex.unlock();
   });
 });
 
 app.post("/credit", (req, res) => {
-  creditBalance
-    .increase(req)
-    .then(credit => {
-      res
-        .status(200)
-        .send(
-          `Your balance have been registered correctly: Now your credit is: ${
-            credit.amount
-          }`
-        );
-    })
-    .catch(err => {
-      res.status(400).send("There was an error while registering your credit");
-    });
+  mutex.lock(function() {
+    creditBalance
+      .increase(req)
+      .then(credit => {
+        res
+          .status(200)
+          .send(
+            `Your balance have been registered correctly: Now your credit is: ${
+              credit.amount
+            }`
+          );
+      })
+      .catch(err => {
+        res
+          .status(400)
+          .send("There was an error while registering your credit");
+      });
+    mutex.unlock();
+  });
 });
 
 const { PORT } = process.env;
