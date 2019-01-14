@@ -8,7 +8,7 @@ const connection = require("./src/database/connect");
 const createMessage = require("./src/database/saveMessage");
 const getMessages = require("./src/database/getMessages");
 const sendMessage = require("./src/controllers/sendMessage");
-const updateCredit = require("./src/database/updateCredit");
+const creditBalance = require("./src/controllers/creditBalance");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -38,32 +38,34 @@ app.get("/messages", (req, res) => {
 app.post("/messages", (req, res) => {
   const { destination, body } = req.body;
   if (validated(destination, body, res)) {
-    sendMessage(destination, body)
-      .then(response => {
-        createMessage(destination, body, true).then(message => {
-          console.log("Message saved on DataBase");
+      sendMessage(destination, body)
+        .then(response => {
+          createMessage(destination, body, true).then(message => {
+            console.log("Message saved on DataBase");
+          });
+          res.status(200).send(`${response.data}`);
+        })
+        .catch(err => {
+          if (err.response == undefined) {
+            createMessage(destination, body, true, false).then(message => {
+              res.status(504).send("Timeout");
+            });
+          } else {
+            createMessage(destination, body, false).then(message => {
+              res
+                .status(`${err.response.status}`)
+                .send("Error sending message");
+            });
+          }
         });
-        res.status(200).send(`${response.data}`);
-      })
-      .catch(err => {
-        if (err.response == undefined) {
-          createMessage(destination, body, true, false).then(message => {
-            res.status(504).send("Timeout");
-          });
-        } else {
-          createMessage(destination, body, false).then(message => {
-            res.status(`${err.response.status}`).send("Error sending message");
-          });
-        }
-      });
-  }
+    }
+  
 });
 
 app.post("/credit", (req, res) => {
-  updateCredit(req)
-  .then(credit=>{
-    res.send(credit)
-  })
+  creditBalance(req).then(credit => {
+    res.send(credit);
+  });
 });
 
 const { PORT } = process.env;
