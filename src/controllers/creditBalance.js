@@ -9,7 +9,9 @@ const creditBalance = {
     });
   },
   decrease: () => {
-    Credit.findOneAndUpdate({}, { $inc: { amount:-1 } }, { new: true });
+    Credit.findOneAndUpdate({}, { $inc: { amount:-1 } }, { new: true }).then(credit=>{
+     console.log("You paid 1€ for our services, thx")
+    });
   }
 };
 
