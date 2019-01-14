@@ -1,7 +1,7 @@
 const Message = require("../Models/Message")
 
-const takeMessage = (conditions = {}) =>{
+const getMessages = (conditions = {}) =>{
   return Message.find(conditions)
 }
 
-module.exports = takeMessage
+module.exports = getMessages
