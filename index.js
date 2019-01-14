@@ -9,6 +9,7 @@ const createMessage = require("./src/database/saveMessage");
 const getMessages = require("./src/database/getMessages");
 const sendMessage = require("./src/controllers/sendMessage");
 const creditBalance = require("./src/controllers/creditBalance");
+const checkCredit = require("./src/controllers/checkCredit");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -16,7 +17,7 @@ app.use(bodyParser.json());
 // setTimeout(function() {
 //   connection();
 // }, 3000);
-connection()
+connection();
 
 app.get("/", (req, res) => {
   res.status(200).send("This is my first, 'Hello World'");
@@ -37,33 +38,49 @@ app.get("/messages", (req, res) => {
 });
 
 app.post("/messages", (req, res) => {
-  const { destination, body } = req.body;
-  if (validated(destination, body, res)) {
-    sendMessage(destination, body)
-      .then(response => {
-        createMessage(destination, body, true).then(message => {
-          console.log("Message saved on DataBase");
-        });
-        res.status(200).send(`${response.data}`);
-      })
-      .catch(err => {
-        if (err.response == undefined) {
-          createMessage(destination, body, true, false).then(message => {
-            res.status(504).send("Timeout");
+  checkCredit().then(result => {
+    if (result) {
+      const { destination, body } = req.body;
+      if (validated(destination, body, res)) {
+        creditBalance.decrease();
+        sendMessage(destination, body)
+          .then(response => {
+            createMessage(destination, body, true).then(message => {
+              console.log("Message saved on DataBase");
+            });
+            res.status(200).send(`${response.data}`);
+          })
+          .catch(err => {
+            if (err.response == undefined) {
+              createMessage(destination, body, true, false).then(message => {
+                res.status(504).send("Timeout");
+              });
+            } else {
+              createMessage(destination, body, false).then(message => {
+                res
+                  .status(`${err.response.status}`)
+                  .send("Error sending message");
+              });
+            }
           });
-        } else {
-          createMessage(destination, body, false).then(message => {
-            res.status(`${err.response.status}`).send("Error sending message");
-          });
-        }
-      });
-  }
+      }
+    }else{
+      res.status(400).send("No credit avalible")
+    }
+  });
 });
 
 app.post("/credit", (req, res) => {
-  creditBalance(req, res)
+  creditBalance
+    .increase(req)
     .then(credit => {
-      res.status(200).send(`Your balance have been registered correctly: Now your credit is: ${credit.amount}`);
+      res
+        .status(200)
+        .send(
+          `Your balance have been registered correctly: Now your credit is: ${
+            credit.amount
+          }`
+        );
     })
     .catch(err => {
       res.status(400).send("There was an error while registering your credit");
