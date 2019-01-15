@@ -11,6 +11,9 @@ const createCredit = req => {
       return new userCredit({
         ...req.body
       }).save();
+    })
+    .catch(err => {
+      
     });
 };
 

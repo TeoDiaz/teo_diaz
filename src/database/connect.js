@@ -20,21 +20,17 @@ let created = [];
 creatingConnection = () => {
   created = [connection(primaryDB), connection(replicaDB)];
   created[0].primary = true;
+  checkConnected(created[0], created[1]);
+  checkConnected(created[1], created[0]);
+  created.forEach(connect => {
+    connect.connection.on("connected", () => {
+      console.log("Correct conexion");
+    });
+  });
 };
 
-creatingConnection();
-setTimeout(function() {}, 0);
-
-created.forEach(connect => {
-  connect.connection.on("connected", () => {
-    console.log("Correct conexion");
-  });
-});
-
 const checkConnected = (primaryDB, replica) => {
-
   primaryDB.connection.on("disconnected", () => {
-  
     primaryDB.connected = false;
     if (primaryDB.primary) {
       primaryDB.primary = false;
@@ -47,11 +43,11 @@ const checkConnected = (primaryDB, replica) => {
   });
 };
 
-checkConnected(created[0], created[1]);
-checkConnected(created[1], created[0]);
+setTimeout(() => {
+  creatingConnection();
+}, 0);
 
 module.exports = {
-  connect: () => creatingConnection(),
   check: dbSelected => {
     let dbReturned;
     if (dbSelected == "primary") {
