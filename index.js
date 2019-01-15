@@ -83,11 +83,16 @@ app.post("/messages", (req, res) => {
 app.post("/credit", (req, res) => {
   mutex.lock(function() {
     if (creditValidated(req, res)) {
-      creditBalance.increase(req).then(response => {
-        res.status(200).send(`Your credit is: ${response.amount}`)
-      }).catch(err=>{
-        res.status(500).send("There was an error while updating your balance")
-      })
+      creditBalance
+        .increase(req)
+        .then(response => {
+          res.status(200).send(`Your credit is: ${response.amount}`);
+        })
+        .catch(err => {
+          res
+            .status(500)
+            .send("There was an error while updating your balance");
+        });
     }
   });
 });

@@ -10,10 +10,17 @@ const createCredit = req => {
       const userCredit = Credit("replica");
       return new userCredit({
         ...req.body
-      }).save();
+      })
+        .save()
+        .then(response => {
+          return response;
+        })
+        .catch(err => {
+          Credit('primary').collection.drop()
+        });
     })
     .catch(err => {
-      
+      return err;
     });
 };
 
