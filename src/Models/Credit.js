@@ -1,10 +1,8 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-
+const connect = require('../database/connect')
 const creditSchema = new Schema({
   amount:Number,
 });
 
-const Credit = mongoose.model("Credit", creditSchema);
-
-module.exports = Credit;
+module.exports = (dbSelected) => connect.check(dbSelected).model("Credit", creditSchema);

@@ -26,15 +26,14 @@ setTimeout(function() {}, 0);
 
 created.forEach(connect => {
   connect.connection.on("connected", () => {
-    console.log("Database is connected correctly");
-    console.log(connect.primary) 
+    console.log("Correct conexion");
   });
-  
-  
 });
 
 const checkConnected = (primaryDB, replica) => {
+
   primaryDB.connection.on("disconnected", () => {
+  
     primaryDB.connected = false;
     if (primaryDB.primary) {
       primaryDB.primary = false;
@@ -43,8 +42,7 @@ const checkConnected = (primaryDB, replica) => {
   });
 
   primaryDB.connection.on("reconnected", () => {
-    primary.isActive = true;
-    primary.isPrimary = !replica.isPrimary;
+    primaryDB.connected = true;
   });
 };
 
@@ -60,7 +58,9 @@ module.exports = {
     } else if (dbSelected == "replica") {
       dbReturned = created.find(db => db.primary == false);
     }
-
     return dbReturned.connection;
+  },
+  isReplica: () => {
+    return created[0].connected && created[1].connected;
   }
 };

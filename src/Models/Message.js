@@ -9,10 +9,6 @@ const messageSchema = new Schema({
   confirm: {type:Boolean, default:true}
 });
 
-
-
-
-
 module.exports = (dbSelected) => connect.check(dbSelected).model("Message", messageSchema);
 
 
