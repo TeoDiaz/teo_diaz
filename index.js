@@ -17,10 +17,10 @@ app.use(bodyParser.json());
 let locks = require("locks");
 let mutex = locks.createMutex();
 
-// setTimeout(function() {
-//   connection();
-// }, 3000);
-connection();
+setTimeout(function() {
+  connection();
+}, 3000);
+
 
 app.get("/", (req, res) => {
   res.status(200).send("This is my first, 'Hello World'");
@@ -60,7 +60,7 @@ app.post("/messages", (req, res) => {
                   res.status(504).send("Timeout");
                 });
               } else {
-                creditBalance.creditReturn()
+                creditBalance.creditReturn();
                 createMessage(destination, body, false).then(message => {
                   res
                     .status(`${err.response.status}`)
@@ -82,13 +82,7 @@ app.post("/credit", (req, res) => {
     creditBalance
       .increase(req)
       .then(credit => {
-        res
-          .status(200)
-          .send(
-            `Your balance have been registered correctly: Now your credit is: ${
-              credit.amount
-            }`
-          );
+        res.status(200).send(`Now your credit is: ${credit.amount}`);
       })
       .catch(err => {
         res
