@@ -51,6 +51,7 @@ app.post("/messages", (req, res) => {
             .then(response => {
               createMessage(destination, body, true).then(message => {
                 console.log("Message saved on DataBase");
+                mutex.unlock();
               });
               res.status(200).send(`${response.data}`);
             })
@@ -58,6 +59,7 @@ app.post("/messages", (req, res) => {
               if (err.response == undefined) {
                 createMessage(destination, body, true, false).then(message => {
                   res.status(504).send("Timeout");
+                  mutex.unlock();
                 });
               } else {
                 creditBalance.creditMovements(1);
@@ -67,15 +69,16 @@ app.post("/messages", (req, res) => {
                     .send(
                       "There was an error sending message, the payment is returned"
                     );
+                  mutex.unlock();
                 });
               }
             });
         }
       } else {
         res.status(400).send("No credit avalible");
+        mutex.unlock();
       }
     });
-    mutex.unlock();
   });
 });
 
@@ -86,14 +89,15 @@ app.post("/credit", (req, res) => {
         .increase(req)
         .then(credit => {
           res.status(200).send(`Now your credit is: ${credit.amount}`);
+          mutex.unlock();
         })
         .catch(err => {
           res
             .status(400)
             .send("There was an error while registering your credit");
+            mutex.unlock();
         });
     }
-    mutex.unlock();
   });
 });
 
