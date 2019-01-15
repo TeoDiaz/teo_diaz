@@ -5,7 +5,7 @@ const app = express();
 const bodyParser = require("body-parser");
 const messageValidated = require("./src/controllers/validations/messageValidations");
 const creditValidated = require("./src/controllers/validations/creditValidated");
-const connection = require("./src/database/connect");
+const database = require("./src/database/connect");
 const createMessage = require("./src/database/saveMessage");
 const getMessages = require("./src/database/getMessages");
 const sendMessage = require("./src/controllers/sendMessage");
@@ -19,8 +19,8 @@ let locks = require("locks");
 let mutex = locks.createMutex();
 
 setTimeout(function() {
-  connection();
-}, 3000);
+ database.connect
+}, 0);
 
 app.get("/", (req, res) => {
   res.status(200).send("This is my first, 'Hello World'");
