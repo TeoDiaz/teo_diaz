@@ -12,7 +12,9 @@ const creditBalance = {
     });
   },
   creditMovements: (quantity) => {
-    Credit('primary').findOneAndUpdate({}, { $inc: { amount:quantity} }, { new: true }).then(credit=>{
+    const req = {body:{amount:quantity}}
+    updateCredit(req)
+   .then(credit=>{
      console.log("Amount modified")
     });
   },
