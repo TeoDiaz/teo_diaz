@@ -3,7 +3,8 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
-const validated = require("./src/controllers/validations");
+const messageValidated = require("./src/controllers/validations/messageValidations");
+const creditValidated = require("./src/controllers/validations/creditValidated");
 const connection = require("./src/database/connect");
 const createMessage = require("./src/database/saveMessage");
 const getMessages = require("./src/database/getMessages");
@@ -44,7 +45,7 @@ app.post("/messages", (req, res) => {
     checkCredit().then(result => {
       if (result) {
         const { destination, body } = req.body;
-        if (validated(destination, body, res)) {
+        if (messageValidated(destination, body, res)) {
           creditBalance.decrease();
           sendMessage(destination, body)
             .then(response => {
@@ -78,16 +79,18 @@ app.post("/messages", (req, res) => {
 
 app.post("/credit", (req, res) => {
   mutex.lock(function() {
-    creditBalance
-      .increase(req)
-      .then(credit => {
-        res.status(200).send(`Now your credit is: ${credit.amount}`);
-      })
-      .catch(err => {
-        res
-          .status(400)
-          .send("There was an error while registering your credit");
-      });
+    if (creditValidated(req, res)) {
+      creditBalance
+        .increase(req)
+        .then(credit => {
+          res.status(200).send(`Now your credit is: ${credit.amount}`);
+        })
+        .catch(err => {
+          res
+            .status(400)
+            .send("There was an error while registering your credit");
+        });
+    }
     mutex.unlock();
   });
 });
