@@ -21,6 +21,7 @@ creatingConnection = () => {
   created = [connection(primaryDB), connection(replicaDB)];
   created[0].primary = true;
 };
+
 creatingConnection();
 setTimeout(function() {}, 0);
 

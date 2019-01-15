@@ -37,42 +37,46 @@ app.get("/messages", (req, res) => {
 
 app.post("/messages", (req, res) => {
   mutex.lock(function() {
-    // if (result) {
-    const { destination, body } = req.body;
-    if (messageValidated(destination, body, res)) {
-      creditBalance.creditMovements(-1);
-      sendMessage(destination, body)
-        .then(response => {
-          createMessage("primary", destination, body, true).then(message => {
-            console.log("Message saved on DataBase");
-            createMessage("replica", destination, body, true);
-            mutex.unlock();
-          });
-          res.status(200).send(`${response.data}`);
-        })
-        .catch(err => {
-          if (err.response == undefined) {
-            createMessage(destination, body, true, false).then(message => {
-              res.status(504).send("Timeout");
-              mutex.unlock();
+    checkCredit().then(result => {
+      if (result) {
+        const { destination, body } = req.body;
+        if (messageValidated(destination, body, res)) {
+          creditBalance.creditMovements(-1);
+          sendMessage(destination, body)
+            .then(response => {
+              createMessage("primary", destination, body, true).then(
+                message => {
+                  console.log("Message saved on DataBase");
+                  createMessage("replica", destination, body, true);
+                  mutex.unlock();
+                }
+              );
+              res.status(200).send(`${response.data}`);
+            })
+            .catch(err => {
+              if (err.response == undefined) {
+                createMessage(destination, body, true, false).then(message => {
+                  res.status(504).send("Timeout");
+                  mutex.unlock();
+                });
+              } else {
+                creditBalance.creditMovements(1);
+                createMessage(destination, body, false).then(message => {
+                  res
+                    .status(`${err.response.status}`)
+                    .send(
+                      "There was an error sending message, the payment is returned"
+                    );
+                  mutex.unlock();
+                });
+              }
             });
-          } else {
-            creditBalance.creditMovements(1);
-            createMessage(destination, body, false).then(message => {
-              res
-                .status(`${err.response.status}`)
-                .send(
-                  "There was an error sending message, the payment is returned"
-                );
-              mutex.unlock();
-            });
-          }
-        });
-    }
-    // } else {
-    //   res.status(400).send("No credit avalible");
-    //   mutex.unlock();
-    // }
+        }
+      } else {
+        res.status(400).send("No credit avalible");
+        mutex.unlock();
+      }
+    });
   });
 });
 

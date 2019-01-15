@@ -4,7 +4,7 @@ const createCredit = require("../database/createCredit");
 
 const creditBalance = {
   increase: req => {
-    return Credit.find().then(credit => {
+    return Credit('primary').find().then(credit => {
       return credit.length == 0 ? createCredit(req) : updateCredit(req);
     });
   },

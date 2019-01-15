@@ -2,7 +2,7 @@ const Credit = require("../Models/Credit");
 
 const updateCredit = req => {
   const {amount} = req.body
-  return Credit.findOneAndUpdate(
+  return Credit('primary').findOneAndUpdate(
     {},
     { $inc:{ amount }},
     {new:true}
