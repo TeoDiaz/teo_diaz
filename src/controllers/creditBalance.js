@@ -10,12 +10,12 @@ const creditBalance = {
   },
   decrease: () => {
     Credit.findOneAndUpdate({}, { $inc: { amount:-1 } }, { new: true }).then(credit=>{
-     console.log("You paid 1€ for our services, thx")
+     console.log("Discounted 1")
     });
   },
   creditReturn: ()=>{
     Credit.findOneAndUpdate({}, { $inc: { amount:1 } }, { new: true }).then(credit=>{
-      console.log("Credit returned to your account, sorry for the inconvenience")
+      console.log("Credit returned to account")
      });
   }
 };

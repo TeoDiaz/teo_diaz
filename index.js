@@ -21,7 +21,6 @@ setTimeout(function() {
   connection();
 }, 3000);
 
-
 app.get("/", (req, res) => {
   res.status(200).send("This is my first, 'Hello World'");
 });
