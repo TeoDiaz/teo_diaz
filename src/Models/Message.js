@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const connect = require('../database/connect')
 
 const messageSchema = new Schema({
   destination: String,
@@ -8,7 +9,10 @@ const messageSchema = new Schema({
   confirm: {type:Boolean, default:true}
 });
 
-const Message = mongoose.model("Message", messageSchema);
 
-module.exports = Message;
+
+
+
+module.exports = (dbSelected) => connect.check(dbSelected).model("Message", messageSchema);
+
 

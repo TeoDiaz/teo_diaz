@@ -5,7 +5,6 @@ const app = express();
 const bodyParser = require("body-parser");
 const messageValidated = require("./src/controllers/validations/messageValidations");
 const creditValidated = require("./src/controllers/validations/creditValidated");
-const database = require("./src/database/connect");
 const createMessage = require("./src/database/saveMessage");
 const getMessages = require("./src/database/getMessages");
 const sendMessage = require("./src/controllers/sendMessage");
@@ -18,9 +17,7 @@ app.use(bodyParser.json());
 let locks = require("locks");
 let mutex = locks.createMutex();
 
-setTimeout(function() {
- database.connect
-}, 0);
+
 
 app.get("/", (req, res) => {
   res.status(200).send("This is my first, 'Hello World'");
@@ -42,8 +39,7 @@ app.get("/messages", (req, res) => {
 
 app.post("/messages", (req, res) => {
   mutex.lock(function() {
-    checkCredit().then(result => {
-      if (result) {
+      // if (result) {
         const { destination, body } = req.body;
         if (messageValidated(destination, body, res)) {
           creditBalance.creditMovements(-1);
@@ -74,11 +70,11 @@ app.post("/messages", (req, res) => {
               }
             });
         }
-      } else {
-        res.status(400).send("No credit avalible");
-        mutex.unlock();
-      }
-    });
+      // } else {
+      //   res.status(400).send("No credit avalible");
+      //   mutex.unlock();
+      // }
+    
   });
 });
 
