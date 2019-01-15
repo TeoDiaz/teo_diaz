@@ -8,7 +8,7 @@ const replicaDB = process.env.MONGO_LOCAL_REPLICA;
 const connection = dbUrl => {
   return {
     primary: false,
-    connected: false,
+    connected: true,
     connection: mongoose.createConnection(dbUrl, {
       useNewUrlParser: true
     })

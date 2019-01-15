@@ -30,6 +30,8 @@ const updateCredit = req => {
             });
         })
     );
+  }else{
+    console.log("One or more database are disconnected")
   }
 };
 
