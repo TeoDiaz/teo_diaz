@@ -1,9 +1,17 @@
-const Credit = require('../Models/Credit')
+const Credit = require("../Models/Credit");
 
-const createCredit = req =>{
-  return new Credit({
+const createCredit = req => {
+  const userCredit = Credit("primary");
+  return new userCredit({
     ...req.body
-  }).save()
+  })
+    .save()
+    .then(credit => {
+      const userCredit = Credit("replica");
+      return new userCredit({
+        ...req.body
+      }).save();
+    });
 };
 
-module.exports = createCredit
+module.exports = createCredit;
