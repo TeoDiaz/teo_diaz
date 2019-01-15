@@ -46,7 +46,7 @@ app.post("/messages", (req, res) => {
       if (result) {
         const { destination, body } = req.body;
         if (messageValidated(destination, body, res)) {
-          creditBalance.decrease();
+          creditBalance.creditMovements(-1);
           sendMessage(destination, body)
             .then(response => {
               createMessage(destination, body, true).then(message => {
@@ -60,11 +60,13 @@ app.post("/messages", (req, res) => {
                   res.status(504).send("Timeout");
                 });
               } else {
-                creditBalance.creditReturn();
+                creditBalance.creditMovements(1);
                 createMessage(destination, body, false).then(message => {
                   res
                     .status(`${err.response.status}`)
-                    .send("Error sending message");
+                    .send(
+                      "There was an error sending message, the payment is returned"
+                    );
                 });
               }
             });

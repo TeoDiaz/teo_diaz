@@ -8,16 +8,11 @@ const creditBalance = {
       return credit.length == 0 ? createCredit(req) : updateCredit(req);
     });
   },
-  decrease: () => {
-    Credit.findOneAndUpdate({}, { $inc: { amount:-1 } }, { new: true }).then(credit=>{
-     console.log("Discounted 1")
+  creditMovements: (quantity) => {
+    Credit.findOneAndUpdate({}, { $inc: { amount:quantity} }, { new: true }).then(credit=>{
+     console.log("Amount modified")
     });
   },
-  creditReturn: ()=>{
-    Credit.findOneAndUpdate({}, { $inc: { amount:1 } }, { new: true }).then(credit=>{
-      console.log("Credit returned to account")
-     });
-  }
 };
 
 module.exports = creditBalance;
