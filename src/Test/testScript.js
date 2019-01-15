@@ -9,9 +9,9 @@ class Client {
       .catch(err =>
         console.log(
           tryNum,
-          !err.response
-            ? `There was an ${err}`
-            : `${err} - ${err.response.statusText}`
+          err.response
+            ? `${err} - ${err.response.statusText}`
+            : `There was an ${err}`
         )
       );
   }

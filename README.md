@@ -6,28 +6,24 @@ Send all request to:
 ```
 http://localhost:9001
 ```
-*Methods:*
+*Paths:*
+
+|  Path | Method  | Response  | Content-type|  Request Required|
+|---|---|---|---|---|
+|   /| Get  |  This is my first, 'Hello World' | | No   
+|   /messages| Get  | All messages on DataBase ||No
+| /messages  |  Post | OK |'application/json'  |Yes
+
+
+<details open><summary> Post Request Details</summary> 
 
 ```
-Method: get
-```
-*Response*
-
-Status 200:
-```
-This is my first, 'Hello World'
-```
-```
-Method: post
-Path: /messages
-Content-Type: 'application/json'
 Request: 
+
 {
   "destination": "STRING",
   "body": "STRING"
 }
-
-Required: Yes
 
 Max length:
   "destination" = 50 characters
@@ -40,8 +36,11 @@ Simple Example:
   "body": "Hello World"
 }
 ```
+</details>
 
-*Response:*
+***
+
+*Responses:*
 
 Status 200:
 ```
