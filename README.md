@@ -13,9 +13,10 @@ http://localhost:9001
 |   /| Get  |  This is my first, 'Hello World' | | No   
 |   /messages| Get  | All messages on DataBase ||No
 | /messages  |  Post | OK |'application/json'  |Yes
+|/credit|Post|Now your credit is: "credit"|'aplication/json|Yes
 
 
-<details open><summary> Post Request Details</summary> 
+<details open><summary>/messages Post Request Details</summary> 
 
 ```
 Request: 
@@ -35,6 +36,21 @@ Simple Example:
   "destination": "User1",
   "body": "Hello World"
 }
+
+Cost of message 1€
+
+*If error sending message, credit retuns to client 
+```
+</details>
+
+<details><summary>/credit Post Request Details</summary> 
+
+```
+Request: 
+
+{
+  "amount": Number
+}
 ```
 </details>
 
@@ -51,12 +67,18 @@ OK
 
 Status 400:
 ```
-You can't provide an empty field
-Numbers are not allowed
-Destination or Body fields missing
-Destination name or message text had exceed the length limit
+Message Post Errors:
+
+  You can't provide an empty field
+  Numbers are not allowed
+  Destination or Body fields missing
+  Destination name or message text had exceed the length limit
+
+Amount Error:
+  No credit avalible
 ```
 Status 500:
 ```
 Internal Server error
+Error sending message
 ```
