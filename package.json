@@ -19,6 +19,7 @@
     "express-json-validator-middleware": "^1.2.3",
     "locks": "^0.2.2",
     "mongodb": "^3.1.10",
-    "mongoose": "^5.3.4"
+    "mongoose": "^5.3.4",
+    "redis": "^2.8.0"
   }
 }
