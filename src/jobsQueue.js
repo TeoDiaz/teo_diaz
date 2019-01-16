@@ -18,7 +18,7 @@ messageQueue.process((job, done) => {
   checkCredit().then(result => {
     if (result) {
       creditBalance.creditMovements(-1);
-      sendMessage(job.data, res)
+      sendMessage(job.data)
         .then(res => {
           done();
         })
@@ -36,9 +36,9 @@ messageQueue.process((job, done) => {
 const startQueue = (req, res) => {
   const { destination, body } = req.body;
   const _id = uniqid();
-  createMessage("primary",_id,destination,body, "pending");
-  createMessage("replica",_id,destination,body, "pending");
-  messageQueue.add({ _id,destination, body });
+  createMessage("primary", _id, destination, body, "pending");
+  createMessage("replica", _id, destination, body, "pending");
+  messageQueue.add({ _id, destination, body });
   res.send(`Your message is on queue with id: ${_id}`);
 };
 
