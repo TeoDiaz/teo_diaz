@@ -3,14 +3,11 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
-const messageValidated = require("./src/controllers/validations/messageValidations");
 const creditValidated = require("./src/controllers/validations/creditValidation");
 const getMessages = require("./src/database/getMessages");
-const sendMessage = require("./src/controllers/sendMessage");
 const creditBalance = require("./src/controllers/creditBalance");
-const checkCredit = require("./src/controllers/checkCredit");
 const setOnQueue = require("./src/jobsQueue")
-
+const getStatus = require('./src/database/getStatus')
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -22,6 +19,8 @@ app.get("/", (req, res) =>
 app.get("/messages", (req, res) => getMessages(res));
 
 app.post("/messages", (req, res) => setOnQueue(req,res));
+
+app.get('/messages/:id/status',(req,res) => getStatus(req,res))
 
 app.post("/credit", (req, res) => {
     if (creditValidated(req, res)) {
