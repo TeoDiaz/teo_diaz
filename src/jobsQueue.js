@@ -11,7 +11,7 @@ const { REDIS_PORT } = process.env;
 
 const messageQueue = new Queue(
   "message-queue",
-  `redis://localhost:${REDIS_PORT}`
+  `redis://${REDIS_PORT}`
 );
 
 messageQueue.process((job, done) => {

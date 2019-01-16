@@ -8,7 +8,6 @@ const getStatus = (req,res) =>{
     console.log(err)
     res.send("Your ID doesn't correspond to any message")
   })
-
 }
 
 module.exports = getStatus
