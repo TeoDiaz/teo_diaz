@@ -3,12 +3,12 @@ require("dotenv").config();
 const axios = require("axios");
 const { API_URL } = process.env;
 const createMessage = require("../database/createMessage");
-const creditBalance = require("./creditBalance")
+const creditBalance = require("./creditBalance");
 
 const sendMessage = (destination, body, res) => {
   return axios({
     method: "post",
-    url: `${API_URL}`,
+    url: `${API_LOCAL_URL}`,
     timeout: "5000",
     data: { destination, body }
   })
