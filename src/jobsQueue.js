@@ -15,7 +15,7 @@ const messageQueue = new Queue(
 );
 
 messageQueue.process((job, done) => {
-  checkCredit().then(result => {
+  checkCredit(job.data._id).then(result => {
     if (result) {
       creditBalance.creditMovements(-1);
       sendMessage(job.data)
@@ -28,8 +28,7 @@ messageQueue.process((job, done) => {
     } else {
       done();
     }
-  });
-  done();
+  })
   throw new Error("An error occurred");
 });
 
