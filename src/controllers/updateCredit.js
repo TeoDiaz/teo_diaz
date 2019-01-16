@@ -1,8 +1,6 @@
 const Credit = require("../Models/Credit");
 const connect = require("../database/connect");
 const updateCredit = req => {
-  console.log(req)
-
   if (connect.isReplica()) {
     return Promise.resolve(
       Credit("primary")

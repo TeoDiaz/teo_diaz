@@ -6,8 +6,7 @@ const messageSchema = new Schema({
   _id: String,
   destination: String,
   body: String,
-  status: String,
-  confirm: {type:Boolean, default:true},
+  status: String
 });
 
 module.exports = (dbSelected) => connect.check(dbSelected).model("Message", messageSchema);
