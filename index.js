@@ -4,7 +4,7 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const messageValidated = require("./src/controllers/validations/messageValidations");
-const creditValidated = require("./src/controllers/validations/creditValidated");
+const creditValidated = require("./src/controllers/validations/creditValidation");
 const createMessage = require("./src/database/createMessage");
 const getMessages = require("./src/database/getMessages");
 const sendMessage = require("./src/controllers/sendMessage");
@@ -17,23 +17,11 @@ app.use(bodyParser.json());
 let locks = require("locks");
 let mutex = locks.createMutex();
 
-app.get("/", (req, res) => {
-  res.status(200).send("This is my first, 'Hello World'");
-});
+app.get("/", (req, res) =>
+  res.status(200).send("This is my first, 'Hello World'")
+);
 
-app.get("/messages", (req, res) => {
-  getMessages()
-    .then(messages => {
-      if (messages.length == 0) {
-        res.status(500).send("DataBase is empty");
-      } else {
-        res.status(200).send(messages);
-      }
-    })
-    .catch(err => {
-      res.status(500).send(`There was an ${err}`);
-    });
-});
+app.get("/messages", (req, res) => getMessages(res));
 
 app.post("/messages", (req, res) => {
   mutex.lock(function() {
@@ -47,7 +35,11 @@ app.post("/messages", (req, res) => {
               createMessage("primary", destination, body, true).then(
                 message => {
                   console.log("Message saved on DataBase");
-                  createMessage("replica", destination, body, true);
+                  createMessage("replica", destination, body, true).then(
+                    message => {
+                      console.log("Also saved on Replica DataBase");
+                    }
+                  );
                   mutex.unlock();
                 }
               );
@@ -89,6 +81,7 @@ app.post("/credit", (req, res) => {
           res.status(200).send(`Your credit is: ${response.amount}`);
         })
         .catch(err => {
+          console.log(err);
           res
             .status(500)
             .send("There was an error while updating your balance");
