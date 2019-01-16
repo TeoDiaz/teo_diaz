@@ -1,25 +1,26 @@
 require("dotenv").config();
 
 const axios = require("axios");
-const { API_URL } = process.env;
-const createMessage = require("../database/createMessage");
-const creditBalance = require("./creditBalance");
+const { API_LOCAL_URL } = process.env;
 
-const sendMessage = (destination, body, res) => {
+const creditBalance = require("./creditBalance");
+const updateMessage = require('./updateCredit')
+
+const sendMessage = (data) => {
+  const {_id,destination, body} = data
   return axios({
     method: "post",
     url: `${API_LOCAL_URL}`,
     timeout: "5000",
-    data: { destination, body }
+    data: { _id,destination, body }
   })
     .then(response => {
-      createMessage("primary", destination, body, true).then(message => {
+      updateMessage("primary", destination, body, true).then(message => {
         console.log("Message saved on DataBase");
-        createMessage("replica", destination, body, true).then(message => {
+        updateMessage("replica", destination, body, true).then(message => {
           console.log("Also saved on Replica DataBase");
         });
       });
-      res.status(200).send(`${response.data}`);
     })
     .catch(err => {
       if (err.response == undefined) {

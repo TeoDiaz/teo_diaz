@@ -9,12 +9,11 @@ const getMessages = require("./src/database/getMessages");
 const sendMessage = require("./src/controllers/sendMessage");
 const creditBalance = require("./src/controllers/creditBalance");
 const checkCredit = require("./src/controllers/checkCredit");
+const setOnQueue = require("./src/jobsQueue")
+
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
-let locks = require("locks");
-let mutex = locks.createMutex();
 
 app.get("/", (req, res) =>
   res.status(200).send("This is my first, 'Hello World'")
@@ -22,27 +21,9 @@ app.get("/", (req, res) =>
 
 app.get("/messages", (req, res) => getMessages(res));
 
-app.post("/messages", (req, res) => {
-  mutex.lock(function() {
-    checkCredit().then(result => {
-      if (result) {
-        const { destination, body } = req.body;
-        if (messageValidated(destination, body, res)) {
-          creditBalance.creditMovements(-1);
-          sendMessage(destination, body,res).then(response=>{
-            mutex.unlock()
-          })
-        }
-      } else {
-        res.status(400).send("No credit avalible");
-        mutex.unlock();
-      }
-    });
-  });
-});
+app.post("/messages", (req, res) => setOnQueue(req,res));
 
 app.post("/credit", (req, res) => {
-  mutex.lock(function() {
     if (creditValidated(req, res)) {
       creditBalance
         .increase(req)
@@ -56,7 +37,6 @@ app.post("/credit", (req, res) => {
             .send("There was an error while updating your balance");
         });
     }
-  });
 });
 
 const { PORT } = process.env;
