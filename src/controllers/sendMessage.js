@@ -15,22 +15,23 @@ const sendMessage = data => {
     data: { _id, destination, body }
   })
     .then(response => {
-      updateMessage("primary", _id, "send").then(message => {
+      updateMessage("primary", _id, "Message sent").then(message => {
         console.log("Message saved on DataBase");
-        updateMessage("replica", _id, "send").then(message => {
+        updateMessage("replica", _id, "Message sent").then(message => {
           console.log("Also saved on Replica DataBase");
         });
       });
     })
     .catch(err => {
       if (err.response == undefined) {
-        updateMessage("primary", _id, "Error: Timeout").then(message => {
+        updateMessage("primary", _id, "Timeout: Message Sent without confirmation").then(message => {
           console.log("Message saved on DataBase");
-          updateMessage("replica", _id, "Error: Timeout").then(message => {
+          updateMessage("replica", _id, "Timeout: Message Sent without confirmation").then(message => {
             console.log("Also saved on Replica DataBase");
           });
         });
       } else {
+        console.log(err.response)
         creditBalance.creditMovements(1);
         updateMessage("primary", _id, "Error sending message").then(message => {
           console.log("Message saved on DataBase");
