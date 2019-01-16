@@ -43,9 +43,7 @@ const checkConnected = (primaryDB, replica) => {
   });
 };
 
-setTimeout(() => {
   creatingConnection();
-}, 3000);
 
 module.exports = {
   check: dbSelected => {
