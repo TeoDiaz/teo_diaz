@@ -5,7 +5,6 @@ const app = express();
 const bodyParser = require("body-parser");
 const messageValidated = require("./src/controllers/validations/messageValidations");
 const creditValidated = require("./src/controllers/validations/creditValidation");
-const createMessage = require("./src/database/createMessage");
 const getMessages = require("./src/database/getMessages");
 const sendMessage = require("./src/controllers/sendMessage");
 const creditBalance = require("./src/controllers/creditBalance");
@@ -30,39 +29,9 @@ app.post("/messages", (req, res) => {
         const { destination, body } = req.body;
         if (messageValidated(destination, body, res)) {
           creditBalance.creditMovements(-1);
-          sendMessage(destination, body)
-            .then(response => {
-              createMessage("primary", destination, body, true).then(
-                message => {
-                  console.log("Message saved on DataBase");
-                  createMessage("replica", destination, body, true).then(
-                    message => {
-                      console.log("Also saved on Replica DataBase");
-                    }
-                  );
-                  mutex.unlock();
-                }
-              );
-              res.status(200).send(`${response.data}`);
-            })
-            .catch(err => {
-              if (err.response == undefined) {
-                createMessage(destination, body, true, false).then(message => {
-                  res.status(504).send("Timeout");
-                  mutex.unlock();
-                });
-              } else {
-                creditBalance.creditMovements(1);
-                createMessage(destination, body, false).then(message => {
-                  res
-                    .status(`${err.response.status}`)
-                    .send(
-                      "There was an error sending message, the payment is returned"
-                    );
-                  mutex.unlock();
-                });
-              }
-            });
+          sendMessage(destination, body,res).then(response=>{
+            mutex.unlock()
+          })
         }
       } else {
         res.status(400).send("No credit avalible");
