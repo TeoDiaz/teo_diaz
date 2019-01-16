@@ -5,7 +5,7 @@ const checkCredit = (_id) => {
   return Credit("primary")
     .find()
     .then(credit => {
-      if (credit == undefined) {
+      if (credit != undefined) {
         return credit[0].amount > 0 ? true : false;
       }
       updateMessage("primary", _id, "Error: No credit available").then(message => {
