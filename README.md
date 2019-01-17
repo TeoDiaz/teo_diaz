@@ -13,7 +13,7 @@ http://localhost:9001
 |   /| Get  |  This is my first, 'Hello World' | | No   
 |   /messages| Get  | All messages on DataBase ||No
 | /messages  |  Post | Your message is on queue with id: "Unique ID" |'application/json'  |Yes
-}/messages/:id/status|Get|The status of your message is: "status"||No
+|/messages/:id/status|Get|The status of your message is: "status"||No
 |/credit|Post|Now your credit is: "credit"|'aplication/json|Yes
 
 
