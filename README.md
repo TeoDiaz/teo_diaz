@@ -61,8 +61,9 @@ Request:
 
 Message Status:
 
-*Errors sending message:*
+*Status sending message:*
 ```
+Pending
 Error sending message
 Timeout: Message Sent without confirmation
 Error: No credit available
