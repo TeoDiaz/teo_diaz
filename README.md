@@ -66,7 +66,6 @@ Message Status:
 Error sending message
 Timeout: Message Sent without confirmation
 Error: No credit available
-
 ```
 *Success sending message*
 ```
