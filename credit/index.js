@@ -3,8 +3,13 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 
+const bodyParser = require("body-parser");
 const creditValidated = require("./controllers/validations/creditValidation");
 const creditBalance = require("./controllers/creditBalance");
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
 
 app.post("/credit", (req, res) => {
   if (creditValidated(req, res)) {

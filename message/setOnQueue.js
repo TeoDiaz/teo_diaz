@@ -5,11 +5,11 @@ const uniqid = require("uniqid");
 const sendMessage = require("./controllers/sendMessage");
 const createMessage = require("./database/createMessage");
 
-const { REDIS_PORT } = process.env;
+const { REDIS_LOCAL_PORT } = process.env;
 
 const messageQueue = new Queue(
   "message-queue",
-  `redis://${REDIS_PORT}`
+  `redis://${REDIS_LOCAL_PORT}`
 );
 
 messageQueue.process((job, done) => {
@@ -30,7 +30,7 @@ const startQueue = (req, res) => {
   createMessage("primary", _id, destination, body, "pending");
   createMessage("replica", _id, destination, body, "pending");
   messageQueue.add({ _id, destination, body });
-  res.send(`Your message is on queue with id: ${_id}`);
+  res.send({messageID: _id});
 };
 
 module.exports = startQueue;

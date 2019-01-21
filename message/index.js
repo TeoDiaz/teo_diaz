@@ -4,7 +4,7 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const getMessages = require("./database/getMessages");
-const setOnQueue = require("./jobsQueue")
+const setOnQueue = require("./setOnQueue")
 const getStatus = require('./database/getStatus')
 
 app.use(bodyParser.urlencoded({ extended: false }));
