@@ -4,20 +4,20 @@ const createCredit = require("../database/createCredit");
 
 const creditBalance = {
   increase: req => {
-    return Credit.find().then(credit => {
-      return credit.length == 0 ? createCredit(req) : updateCredit(req);
+    return Credit('primary').find().then(credit => {
+     return credit.length == 0 ? createCredit(req) :
+      Credit('replica').find().then(credit =>{
+        return credit.length == 0 ? createCredit(req) : updateCredit(req);
+      })
     });
   },
-  decrease: () => {
-    Credit.findOneAndUpdate({}, { $inc: { amount:-1 } }, { new: true }).then(credit=>{
-     console.log("Discounted 1")
+  creditMovements: (quantity) => {
+    const req = {body:{amount:quantity}}
+    updateCredit(req)
+   .then(credit=>{
+     console.log("Amount modified")
     });
   },
-  creditReturn: ()=>{
-    Credit.findOneAndUpdate({}, { $inc: { amount:1 } }, { new: true }).then(credit=>{
-      console.log("Credit returned to account")
-     });
-  }
 };
 
 module.exports = creditBalance;

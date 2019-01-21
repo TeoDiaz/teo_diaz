@@ -4,9 +4,7 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const messageValidated = require("./src/controllers/validations/messageValidations");
-const creditValidated = require("./src/controllers/validations/creditValidated");
-const connection = require("./src/database/connect");
-const createMessage = require("./src/database/saveMessage");
+const creditValidated = require("./src/controllers/validations/creditValidation");
 const getMessages = require("./src/database/getMessages");
 const sendMessage = require("./src/controllers/sendMessage");
 const creditBalance = require("./src/controllers/creditBalance");
@@ -18,27 +16,11 @@ app.use(bodyParser.json());
 let locks = require("locks");
 let mutex = locks.createMutex();
 
-setTimeout(function() {
-  connection();
-}, 3000);
+app.get("/", (req, res) =>
+  res.status(200).send("This is my first, 'Hello World'")
+);
 
-app.get("/", (req, res) => {
-  res.status(200).send("This is my first, 'Hello World'");
-});
-
-app.get("/messages", (req, res) => {
-  getMessages()
-    .then(messages => {
-      if (messages.length == 0) {
-        res.status(500).send("DataBase is empty");
-      } else {
-        res.status(200).send(messages);
-      }
-    })
-    .catch(err => {
-      res.status(500).send(`There was an ${err}`);
-    });
-});
+app.get("/messages", (req, res) => getMessages(res));
 
 app.post("/messages", (req, res) => {
   mutex.lock(function() {
@@ -46,34 +28,16 @@ app.post("/messages", (req, res) => {
       if (result) {
         const { destination, body } = req.body;
         if (messageValidated(destination, body, res)) {
-          creditBalance.decrease();
-          sendMessage(destination, body)
-            .then(response => {
-              createMessage(destination, body, true).then(message => {
-                console.log("Message saved on DataBase");
-              });
-              res.status(200).send(`${response.data}`);
-            })
-            .catch(err => {
-              if (err.response == undefined) {
-                createMessage(destination, body, true, false).then(message => {
-                  res.status(504).send("Timeout");
-                });
-              } else {
-                creditBalance.creditReturn();
-                createMessage(destination, body, false).then(message => {
-                  res
-                    .status(`${err.response.status}`)
-                    .send("Error sending message");
-                });
-              }
-            });
+          creditBalance.creditMovements(-1);
+          sendMessage(destination, body,res).then(response=>{
+            mutex.unlock()
+          })
         }
       } else {
         res.status(400).send("No credit avalible");
+        mutex.unlock();
       }
     });
-    mutex.unlock();
   });
 });
 
@@ -82,16 +46,16 @@ app.post("/credit", (req, res) => {
     if (creditValidated(req, res)) {
       creditBalance
         .increase(req)
-        .then(credit => {
-          res.status(200).send(`Now your credit is: ${credit.amount}`);
+        .then(response => {
+          res.status(200).send(`Your credit is: ${response.amount}`);
         })
         .catch(err => {
+          console.log(err);
           res
-            .status(400)
-            .send("There was an error while registering your credit");
+            .status(500)
+            .send("There was an error while updating your balance");
         });
     }
-    mutex.unlock();
   });
 });
 
