@@ -5,7 +5,7 @@ const getCredit = req => {
     .find()
     .then(credit => {
       if (credit.length > 0) {
-        return credit[0].amount;
+        return `Your credit is: ${credit[0].amount}`;
       } else {
         return "No credit avalaible";
       }

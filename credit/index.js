@@ -31,7 +31,7 @@ app.get("/credit", (req, res) => {
       res.send(response);
     })
     .catch(err => {
-      res.send(err);
+      console.log(err);
     });
 });
 
