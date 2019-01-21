@@ -3,7 +3,6 @@ require("dotenv").config();
 const axios = require("axios");
 const { API_URL } = process.env;
 
-const creditBalance = require("./creditBalance");
 const updateMessage = require("./updateMessage");
 
 const sendMessage = data => {
@@ -32,7 +31,6 @@ const sendMessage = data => {
         });
       } else {
         console.log(err.response)
-        creditBalance.creditMovements(1);
         updateMessage("primary", _id, "Error sending message").then(message => {
           console.log("Message saved on DataBase");
           updateMessage("replica", _id, "Error sending message").then(

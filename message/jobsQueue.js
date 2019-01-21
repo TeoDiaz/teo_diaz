@@ -3,8 +3,6 @@ const Queue = require("bull");
 const uniqid = require("uniqid");
 
 const sendMessage = require("./controllers/sendMessage");
-const creditBalance = require("./controllers/creditBalance");
-const checkCredit = require("./controllers/checkCredit");
 const createMessage = require("./database/createMessage");
 
 const { REDIS_PORT } = process.env;
@@ -15,20 +13,14 @@ const messageQueue = new Queue(
 );
 
 messageQueue.process((job, done) => {
-  checkCredit(job.data._id).then(result => {
-    if (result) {
-      creditBalance.creditMovements(-1);
       sendMessage(job.data)
         .then(res => {
           done();
         })
         .catch(err => {
+          console.log(err)
           done();
         });
-    } else {
-      done();
-    }
-  })
   throw new Error("An error occurred");
 });
 
