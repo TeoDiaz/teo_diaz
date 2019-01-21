@@ -1,13 +1,14 @@
 const Credit = require("../Models/Credit");
 
 const getCredit = req => {
-  Credit("primary")
+  return Credit("primary")
     .find()
     .then(credit => {
       if (credit.length > 0) {
-        return credit[0].amount > 0 ? true : false;
+        return credit[0].amount;
+      } else {
+        return "No credit avalaible";
       }
-      return "No credit avalaible"
     });
 };
 
