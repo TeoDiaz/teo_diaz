@@ -2,14 +2,14 @@ require("dotenv").config();
 
 const express = require("express");
 const app = express();
-
 const bodyParser = require("body-parser");
 const creditValidated = require("./controllers/validations/creditValidation");
 const creditBalance = require("./controllers/creditBalance");
+const getCredit = require("./controllers/getCredit");
+require("./creditQueue");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
 
 app.post("/credit", (req, res) => {
   if (creditValidated(req, res)) {
@@ -20,14 +20,22 @@ app.post("/credit", (req, res) => {
       })
       .catch(err => {
         console.log(err);
-        res
-          .status(500)
-          .send("There was an error while updating your balance");
+        res.status(500).send("There was an error while updating your balance");
       });
   }
 });
 
-const {PORT_CREDIT} = process.env
+app.get("/credit", (req, res) => {
+  getCredit()
+    .then(response => {
+      res.send(response);
+    })
+    .catch(err => {
+      res.send(err);
+    });
+});
+
+const { PORT_CREDIT } = process.env;
 app.listen(PORT_CREDIT, () => {
   console.log(`I'm ready on port ${PORT_CREDIT}!`);
 });

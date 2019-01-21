@@ -1,14 +1,13 @@
 const Credit = require("../Models/Credit");
 const connect = require("../database/connect");
 
-const updateCredit = req => {
+const updateCredit = amount => {
   if (connect.isReplica()) {
     return Promise.resolve(
       Credit("primary")
         .find()
         .then(credit => {
           let oldCredit = credit;
-          const { amount } = req.body;
           return Credit("primary")
             .findOneAndUpdate({}, { $inc: { amount } }, { new: true })
             .then(credit => {
@@ -29,6 +28,10 @@ const updateCredit = req => {
             .catch(err => {
               return err;
             });
+        })
+        .catch(err=>{
+          console.log(err)
+          return "No credit avalaible"
         })
     );
   }else{
