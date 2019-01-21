@@ -8,10 +8,10 @@ const updateCredit = require('./controllers/updateCredit')
 const creditQueue = new Queue("credit-queue", `redis://${REDIS_LOCAL_PORT}`);
 
 creditQueue.process((job, done) => {
-  return updateCredit(job.data.cost).then(response =>{
+  updateCredit(job.data.cost).then(response =>{
     console.log(response)
-    done()
-  })
+    return response
+  }).then(()=>done())
 });
 
 
