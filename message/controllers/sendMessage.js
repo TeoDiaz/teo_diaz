@@ -38,7 +38,7 @@ const sendMessage = data => {
             console.log("Also saved on Replica DataBase");
           });
         });
-        return true
+        return true;
       } else {
         console.log(err.response);
         updateMessage("primary", _id, "Error sending message").then(message => {

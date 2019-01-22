@@ -4,24 +4,42 @@ const uniqid = require("uniqid");
 
 const sendMessage = require("./controllers/sendMessage");
 const createMessage = require("./database/createMessage");
+const updateMessage = require("./controllers/updateMessage");
 
 const { REDIS_LOCAL_PORT } = process.env;
 
-const chargedQueue = new Queue("charged-queue", `redis://${REDIS_LOCAL_PORT}`);
+const messageQueue = new Queue("charged-queue", `redis://${REDIS_LOCAL_PORT}`);
 const creditQueue = new Queue("credit-queue", `redis://${REDIS_LOCAL_PORT}`);
-const creditBackQueue = new Queue('creditBack-queue', `redis://${REDIS_LOCAL_PORT}`)
+const creditBackQueue = new Queue(
+  "creditBack-queue",
+  `redis://${REDIS_LOCAL_PORT}`
+);
 
 const saveOnDatabase = (_id, destination, body) => {
-  return createMessage("primary", _id, destination, body, "pending").then(() =>
-    createMessage("replica", _id, destination, body, "pending")
+  return createMessage("primary", _id, destination, body, "pending").then(
+    () => {
+      return createMessage("replica", _id, destination, body, "pending");
+    }
   );
 };
 
-chargedQueue.process((job, done) => {
-  sendMessage(job.data).then(response => {
-  response ? done() : creditBackQueue.add({amount:1})
+const errorCredit = data => {
+  const { _id } = data.message;
+  const paidError = data.type;
+  return updateMessage("primary", _id, paidError).then(message => {
+    return updateMessage("replica", _id, paidError);
   });
-  done();
+};
+
+messageQueue.process((job, done) => {
+  if (job.data.type == "OK") {
+    sendMessage(job.data.message).then(response => {
+      response ? done() : creditBackQueue.add({ amount: 1 });
+      done();
+    });
+  } else {
+    errorCredit(job.data).then(() => done());
+  }
 });
 
 const startQueue = (req, res) => {

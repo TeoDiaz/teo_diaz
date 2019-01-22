@@ -8,15 +8,17 @@ const checkCredit = () => {
       if (credit.length > 0) {
         if (credit[0].amount > 0) {
           const req = { body: { amount: -1 } };
-          return updateCredit(req).then(() => true);
+          return updateCredit(req)
+            .then(() => "OK")
+            .catch(err => "Error while saving paiment on Database");
         } else {
-          return false;
+          return "Not enough credit";
         }
       } else {
-        return false;
+        return "No credit registered";
       }
     })
-    .catch(err => console.log(err));
+    .catch(err => "Error while checking credit");
 };
 
 module.exports = checkCredit;
