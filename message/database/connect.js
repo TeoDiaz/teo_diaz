@@ -28,18 +28,19 @@ creatingConnection = () => {
   });
 };
 
-const checkConnected = (primaryDB, replica) => {
-  primaryDB.connection.on("disconnected", () => {
-    primaryDB.connected = false;
-    if (primaryDB.primary) {
-      primaryDB.primary = false;
-      replica.primary = replica.connected;
+const checkConnected = (firstDB, secondDB) => {
+  firstDB.connection.on("disconnected", () => {
+    firstDB.connected = false;
+    if (firstDB.primary) {
+      firstDB.primary = false;
+      secondDB.primary = secondDB.connected;
     }
   });
 
-  primaryDB.connection.on("reconnected", () => {
-    primaryDB.connected = true;
-    console.log(`${primaryDB} reconnected`)
+  firstDB.connection.on("reconnected", () => {
+    firstDB.connected = true;
+    db.copyDatabase(secondDB,firstDB)
+    console.log(`${firstDB} reconnected`)
   });
 };
 
