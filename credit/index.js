@@ -5,7 +5,7 @@ const app = express();
 const bodyParser = require("body-parser");
 const creditValidated = require("./controllers/validations/creditValidation");
 const creditBalance = require("./controllers/creditBalance");
-const getCredit = require("./controllers/getCredit");
+const getCredit = require("./clients/getCredit");
 require("./creditQueue");
 
 app.use(bodyParser.urlencoded({ extended: false }));

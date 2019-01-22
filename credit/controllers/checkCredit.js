@@ -1,13 +1,20 @@
 const Credit = require("../Models/Credit");
+const updateCredit = require("../controllers/updateCredit");
 
 const checkCredit = () => {
-  Credit.find().then(credit => {
-    if (credit.length > 0) {
-      credit[0] > 0 ? true : false;
-    } else {
-      return false;
-    }
-  });
+  return Credit("primary")
+    .find()
+    .then(credit => {
+      if (credit.length > 0) {
+        if (credit[0].amount > 0) {
+          const req = { body: { amount: -1 } };
+          return updateCredit(req).then(() => true);
+        }
+      } else {
+        return false;
+      }
+    })
+    .catch(err => console.log(err));
 };
 
 module.exports = checkCredit;

@@ -1,8 +1,7 @@
-const Message = require("../Models/Message");
+const getMessages = require("../clients/getMessages");
 
-const getMessages = (res) => {
-  return Message("primary")
-    .find()
+module.exports = res => {
+  getMessages()
     .then(messages => {
       if (messages.length == 0) {
         res.status(500).send("DataBase is empty");
@@ -14,5 +13,3 @@ const getMessages = (res) => {
       res.status(500).send(`There was an ${err}`);
     });
 };
-
-module.exports = getMessages;

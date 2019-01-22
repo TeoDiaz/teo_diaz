@@ -1,8 +1,8 @@
 require("dotenv").config();
 
 const mongoose = require("mongoose");
-const primaryDB = process.env.MONGO_CREDIT_URL_PRIMARY;
-const replicaDB = process.env.MONGO_CREDIT_URL_REPLICA;
+const primaryDB = process.env.MONGO_CREDIT_LOCAL_PRIMARY;
+const replicaDB = process.env.MONGO_CREDIT_LOCAL_REPLICA;
 
 const connection = dbUrl => {
   return {
