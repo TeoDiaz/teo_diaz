@@ -1,7 +1,7 @@
 require("dotenv").config();
 
 const axios = require("axios");
-const { API_LOCAL_URL } = process.env;
+const { API_URL } = process.env;
 
 const updateMessage = require("./updateMessage");
 
@@ -9,7 +9,7 @@ const sendMessage = data => {
   const { _id, destination, body } = data;
   return axios({
     method: "post",
-    url: `${API_LOCAL_URL}`,
+    url: `${API_URL}`,
     timeout: "5000",
     data: { _id, destination, body }
   })

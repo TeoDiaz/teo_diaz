@@ -4,7 +4,7 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const getMessages = require("./controllers/getMessages");
-const setOnQueue = require("./setOnQueue");
+const setOnQueue = require("./jobs/setOnQueue");
 const getStatus = require("./controllers/getStatus");
 
 app.use(bodyParser.urlencoded({ extended: false }));

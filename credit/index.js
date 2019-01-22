@@ -6,7 +6,7 @@ const bodyParser = require("body-parser");
 const creditValidated = require("./controllers/validations/creditValidation");
 const creditBalance = require("./controllers/creditBalance");
 const getCredit = require("./clients/getCredit");
-require("./creditQueue");
+require("./jobs/creditQueue");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
