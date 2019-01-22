@@ -23,6 +23,7 @@ messageQueue.process((job, done) => {
           done();
         })
         .catch(err => {
+          creditBalance.creditMovements(1);
           done();
         });
     } else {
