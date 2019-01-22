@@ -4,8 +4,8 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const getMessages = require("./database/getMessages");
-const setOnQueue = require("./setOnQueue")
-const getStatus = require('./database/getStatus')
+const setOnQueue = require("./setOnQueue");
+const getStatus = require("./database/getStatus");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -16,9 +16,16 @@ app.get("/", (req, res) =>
 
 app.get("/messages", (req, res) => getMessages(res));
 
-app.post("/messages", (req, res) => setOnQueue(req,res));
+app.post("/messages", (req, res) => setOnQueue(req, res));
 
-app.get('/messages/:id/status',(req,res) => getStatus(req,res))
+app.get("/messages/:id/status", (req, res) => {
+  const { id } = req.params;
+  getStatus(id)
+    .then(response =>
+      res.send(`The status of your message is: ${response.status}`)
+    )
+    .catch(err => res.send("Your ID doesn't correspond to any message"));
+});
 
 const { PORT_MESSAGE } = process.env;
 

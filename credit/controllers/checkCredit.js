@@ -1,4 +1,4 @@
-const Credit = require("./Models/Credit");
+const Credit = require("../Models/Credit");
 
 const checkCredit = () => {
   Credit.find().then(credit => {
