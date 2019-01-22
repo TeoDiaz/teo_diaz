@@ -9,6 +9,8 @@ const checkCredit = () => {
         if (credit[0].amount > 0) {
           const req = { body: { amount: -1 } };
           return updateCredit(req).then(() => true);
+        } else {
+          return false;
         }
       } else {
         return false;

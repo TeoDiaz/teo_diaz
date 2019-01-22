@@ -20,17 +20,27 @@ const sendMessage = data => {
           console.log("Also saved on Replica DataBase");
         });
       });
+      return true;
     })
     .catch(err => {
       if (err.response == undefined) {
-        updateMessage("primary", _id, "Timeout: Message Sent without confirmation").then(message => {
+        updateMessage(
+          "primary",
+          _id,
+          "Timeout: Message Sent without confirmation"
+        ).then(message => {
           console.log("Message saved on DataBase");
-          updateMessage("replica", _id, "Timeout: Message Sent without confirmation").then(message => {
+          updateMessage(
+            "replica",
+            _id,
+            "Timeout: Message Sent without confirmation"
+          ).then(message => {
             console.log("Also saved on Replica DataBase");
           });
         });
+        return true
       } else {
-        console.log(err.response)
+        console.log(err.response);
         updateMessage("primary", _id, "Error sending message").then(message => {
           console.log("Message saved on DataBase");
           updateMessage("replica", _id, "Error sending message").then(
@@ -42,6 +52,5 @@ const sendMessage = data => {
       }
     });
 };
-
 
 module.exports = sendMessage;
