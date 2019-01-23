@@ -39,6 +39,7 @@ const checkConnected = (primaryDB, replica) => {
 
   primaryDB.connection.on("reconnected", () => {
     primaryDB.connected = true;
+    db.copyDatabase(secondDB,firstDB)
     console.log(`${primaryDB} reconnected`)
   });
 };
