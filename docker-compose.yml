@@ -15,10 +15,64 @@ services:
       - mongodb_message
       - replica_message
       - redis
+  message2:
+    build: message/
+    ports:
+      - "9002:9002"
+    links:
+      - messageapp
+      - mongodb_message
+      - replica_message
+      - redis
+      - credit
+    depends_on:
+      - messageapp
+      - mongodb_message
+      - replica_message
+      - redis
+  message3:
+    build: message/
+    ports:
+      - "9003:9003"
+    links:
+      - messageapp
+      - mongodb_message
+      - replica_message
+      - redis
+      - credit
+    depends_on:
+      - messageapp
+      - mongodb_message
+      - replica_message
+      - redis
   credit:
     build: credit/
     ports:
       - "9017:9017"
+    links:
+      - mongodb_credit
+      - replica_credit
+      - redis
+    depends_on:
+      - mongodb_credit
+      - replica_credit
+      - redis
+  credit2:
+    build: credit/
+    ports:
+      - "9018:9018"
+    links:
+      - mongodb_credit
+      - replica_credit
+      - redis
+    depends_on:
+      - mongodb_credit
+      - replica_credit
+      - redis
+  credit3:
+    build: credit/
+    ports:
+      - "9019:9019"
     links:
       - mongodb_credit
       - replica_credit
@@ -40,23 +94,26 @@ services:
       - 27017:27017
   replica_credit:
     image: mongo
+    command: mongod --port 27018
     volumes:
       - ./credit/data/replica:/credit/data/replica
     ports:
-      - 27018:27017
+      - 27018:27018
 
   mongodb_message:
     image: mongo
+    command: mongod --port 27027
     volumes:
       - ./message/data/db:/message/data/db
     ports:
-      - 27027:27017
+      - 27027:27027
   replica_message:
     image: mongo
+    command: mongod --port 27028
     volumes:
       - ./message/data/replica:/message/data/replica
     ports:
-      - 27028:27017
+      - 27028:27028
 
   redis:
     image: redis
