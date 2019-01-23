@@ -13,42 +13,46 @@ const sendMessage = data => {
     timeout: "5000",
     data: { _id, destination, body }
   })
-    .then(response => {
-      updateMessage("primary", _id, "Message sent").then(message => {
-        console.log("Message saved on DataBase");
-        updateMessage("replica", _id, "Message sent").then(message => {
-          console.log("Also saved on Replica DataBase");
-          return true;
-        });
-      });
+    .then(() => {
+      return updateMessage("primary", _id, "Message sent");
+    })
+    .then(() => {
+      console.log("Saved on Primary Database");
+      return updateMessage("replica", _id, "Message sent");
+    })
+    .then(() => {
+      console.log("Also saved on Replica DataBase");
+      return true;
     })
     .catch(err => {
       if (err.response == undefined) {
-        updateMessage(
+        return updateMessage(
           "primary",
           _id,
           "Timeout: Message Sent without confirmation"
-        ).then(message => {
-          console.log("Message saved on DataBase");
-          updateMessage(
-            "replica",
-            _id,
-            "Timeout: Message Sent without confirmation"
-          ).then(message => {
+        )
+          .then(() => {
+            console.log("Message saved on DataBase");
+            updateMessage(
+              "replica",
+              _id,
+              "Timeout: Message Sent without confirmation"
+            );
+          })
+          .then(() => {
             console.log("Also saved on Replica DataBase");
             return true;
           });
-        });
       } else {
         console.log(err.response);
-        updateMessage("primary", _id, "Error sending message").then(message => {
-          console.log("Message saved on DataBase");
-          updateMessage("replica", _id, "Error sending message").then(
-            message => {
-              console.log("Also saved on Replica DataBase");
-            }
-          );
-        });
+        return updateMessage("primary", _id, "Error sending message")
+          .then(() => {
+            console.log("Message saved on DataBase");
+            updateMessage("replica", _id, "Error sending message");
+          })
+          .then(() => {
+            console.log("Also saved on Replica DataBase");
+          });
       }
     });
 };
