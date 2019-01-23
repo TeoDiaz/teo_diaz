@@ -1,0 +1,26 @@
+{
+  "name": "exercise",
+  "version": "1.0.0",
+  "description": "Cabify Bootcamp Exercise",
+  "main": "index.js",
+  "scripts": {
+    "start": "index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:TeoDiaz/teo_diaz.git"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "body-parser": "^1.18.3",
+    "bull": "^3.5.2",
+    "dotenv": "^6.2.0",
+    "express": "^4.16.3",
+    "express-json-validator-middleware": "^1.2.3",
+    "mongodb": "^3.1.10",
+    "mongoose": "^5.3.4",
+    "redis": "^2.8.0",
+    "uniqid": "^5.0.3"
+  }
+}

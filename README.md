@@ -2,32 +2,28 @@
 ***
 #### This is the definitive guide to use this amazing API
  
-Send all request to: 
+Request to: 
 ```
 http://localhost:9001
 ```
-*Methods:*
+*Paths:*
+
+|  Path | Method  | Response  | Content-type|  Request Required|
+|---|---|---|---|---|
+|   /| Get  |  This is my first, 'Hello World' | | No   
+|   /messages| Get  | All messages on DataBase ||No
+| /messages  |  Post | Your message is on queue with id: "Unique ID" |'application/json'  |Yes
+|/messages/:id/status|Get|The status of your message is: "status"||No
+
+<details open><summary>/messages Post Request Details</summary> 
 
 ```
-Method: get
-```
-*Response:*
-
-Status 200:
-```
-This is my first, 'Hello World'
-```
-```
-Method: post
-Path: /messages
-Content-Type: 'application/json'
 Request: 
+
 {
   "destination": "STRING",
   "body": "STRING"
 }
-
-Required: Yes
 
 Max length:
   "destination" = 50 characters
@@ -39,25 +35,61 @@ Simple Example:
   "destination": "User1",
   "body": "Hello World"
 }
+
+Cost of message 1€
+
+*If error sending message, credit retuns to client 
+```
+</details>
+
+***
+
+*Responses:*
+
+
+Message Status:
+
+*Status sending message:*
+```
+Pending
+Error sending message
+Timeout: Message Sent without confirmation
+Error: No credit available
+```
+*Success sending message*
+```
+Message sent
 ```
 
-*Response:*
-
-Status 200:
+Message Get Errors:
 ```
-OK
+Database is empty
 ```
 
-*ERRORS:* 
+Request to: 
+```
+http://localhost:9017
+```
+*Paths:*
 
-Status 400:
+|  Path | Method  | Response  | Content-type|  Request Required|
+|---|---|---|---|---|
+|/credit|Get|Your credit is: "credit"||No
+|/credit|Post|Now your credit is: "credit"|'aplication/json|Yes
+
+<details open><summary>/credit Post Request Details</summary> 
+
 ```
-You can't provide an empty field
-Numbers are not allowed
-Destination or Body fields missing
-Destination name or message text had exceed the length limit
+Request: 
+
+{
+  "amount": Number
+}
 ```
-Status 500:
+
+</details>
+
+Credit errors: 
 ```
-Internal Server error
+No credit avalaible
 ```
