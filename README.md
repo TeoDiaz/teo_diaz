@@ -14,6 +14,9 @@ http://localhost:9001
 |   /messages| Get  | All messages on DataBase ||No
 | /messages  |  Post | Your message is on queue with id: "Unique ID" |'application/json'  |Yes
 |/messages/:id/status|Get|The status of your message is: "status"||No
+|/health|Get|status:200||No
+
+*/health path is defined for haproxy check function*
 
 <details open><summary>/messages Post Request Details</summary> 
 
