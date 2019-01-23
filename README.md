@@ -12,7 +12,8 @@ http://localhost:9001
 |---|---|---|---|---|
 |   /| Get  |  This is my first, 'Hello World' | | No   
 |   /messages| Get  | All messages on DataBase ||No
-| /messages  |  Post | OK |'application/json'  |Yes
+| /messages  |  Post | Your message is on queue with id: "Unique ID" |'application/json'  |Yes
+}/messages/:id/status|Get|The status of your message is: "status"||No
 |/credit|Post|Now your credit is: "credit"|'aplication/json|Yes
 
 
@@ -58,27 +59,15 @@ Request:
 
 *Responses:*
 
-Status 200:
-```
-OK
-```
+Message Status:
 
-*ERRORS:* 
-
-Status 400:
+*Errors sending message:*
 ```
-Message Post Errors:
-
-  You can't provide an empty field
-  Numbers are not allowed
-  Destination or Body fields missing
-  Destination name or message text had exceed the length limit
-
-Amount Error:
-  No credit avalible
-```
-Status 500:
-```
-Internal Server error
 Error sending message
+Timeout: Message Sent without confirmation
+Error: No credit available
+```
+*Success sending message*
+```
+Message sent
 ```

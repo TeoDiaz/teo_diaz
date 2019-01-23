@@ -3,12 +3,13 @@ const Schema = mongoose.Schema;
 const connect = require('../database/connect')
 
 const messageSchema = new Schema({
+  _id: String,
   destination: String,
   body: String,
-  sent: Boolean,
-  confirm: {type:Boolean, default:true}
+  status: String
 });
 
 module.exports = (dbSelected) => connect.check(dbSelected).model("Message", messageSchema);
+
 
 

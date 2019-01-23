@@ -14,11 +14,14 @@
   "dependencies": {
     "axios": "^0.18.0",
     "body-parser": "^1.18.3",
+    "bull": "^3.5.2",
     "dotenv": "^6.2.0",
     "express": "^4.16.3",
     "express-json-validator-middleware": "^1.2.3",
     "locks": "^0.2.2",
     "mongodb": "^3.1.10",
-    "mongoose": "^5.3.4"
+    "mongoose": "^5.3.4",
+    "redis": "^2.8.0",
+    "uniqid": "^5.0.3"
   }
 }
