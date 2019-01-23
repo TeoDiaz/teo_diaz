@@ -5,7 +5,8 @@ const app = express();
 const bodyParser = require("body-parser");
 const getMessages = require("./controllers/getMessages");
 const startQueue = require("./jobs/startQueue");
-const getStatus = require("./controllers/getStatus");
+const getStatus = require('./controllers/getStatus')
+const checkHealth = require('./controllers/checkHealth')
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -18,7 +19,9 @@ app.get("/messages", (req, res) => getMessages(res));
 
 app.post("/messages", (req, res) => startQueue(req, res));
 
-app.get("/messages/:id/status", (req, res) => getStatus(req, res));
+app.get("/messages/:id/status", (req, res) => getStatus(req,res));
+
+app.get('/health',(req,res)=> checkHealth(res))
 
 const { PORT_MESSAGE } = process.env;
 

@@ -18,7 +18,7 @@ services:
   message2:
     build: message/
     ports:
-      - "9002:9002"
+      - "9002:9001"
     links:
       - messageapp
       - mongodb_message
@@ -33,7 +33,7 @@ services:
   message3:
     build: message/
     ports:
-      - "9003:9003"
+      - "9003:9001"
     links:
       - messageapp
       - mongodb_message
@@ -57,30 +57,6 @@ services:
       - mongodb_credit
       - replica_credit
       - redis
-  credit2:
-    build: credit/
-    ports:
-      - "9018:9018"
-    links:
-      - mongodb_credit
-      - replica_credit
-      - redis
-    depends_on:
-      - mongodb_credit
-      - replica_credit
-      - redis
-  credit3:
-    build: credit/
-    ports:
-      - "9019:9019"
-    links:
-      - mongodb_credit
-      - replica_credit
-      - redis
-    depends_on:
-      - mongodb_credit
-      - replica_credit
-      - redis
   messageapp:
     image: cabify/backend-bootcamp-messageapp
     ports:
@@ -94,28 +70,35 @@ services:
       - 27017:27017
   replica_credit:
     image: mongo
-    command: mongod --port 27018
     volumes:
       - ./credit/data/replica:/credit/data/replica
     ports:
-      - 27018:27018
+      - 27018:27017
 
   mongodb_message:
     image: mongo
-    command: mongod --port 27027
     volumes:
       - ./message/data/db:/message/data/db
     ports:
-      - 27027:27027
+      - 27027:27017
   replica_message:
     image: mongo
-    command: mongod --port 27028
     volumes:
       - ./message/data/replica:/message/data/replica
     ports:
-      - 27028:27028
-
+      - 27028:27017
   redis:
     image: redis
     ports:
       - 6379:6379
+  haproxy:
+    image: haproxy:latest
+    depends_on:
+      - message
+      - message2
+      - message3
+      - credit
+    volumes:
+      - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+    ports:
+      - 80:80

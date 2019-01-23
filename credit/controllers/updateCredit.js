@@ -21,7 +21,7 @@ const updateCredit = req => {
                   .catch(err => {
                     Credit("primary").findOneAndUpdate(
                       {},
-                      { $inc: { amount: oldCredit } },
+                      { $set: { amount: oldCredit } },
                       { new: true }
                     );
                     return err;

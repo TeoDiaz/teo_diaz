@@ -52,9 +52,11 @@ Message Status:
 *Status sending message:*
 ```
 Pending
-Error sending message
+Error while saving paiment on Database
+Not enough credit
+No credit registered
+Error while checking credit
 Timeout: Message Sent without confirmation
-Error: No credit available
 ```
 *Success sending message*
 ```
