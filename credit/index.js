@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.post("/credit", (req, res) => {
-  if (creditValidated(req, res)) {
+  if (creditValidated(req)) {
     creditBalance
       .increase(req)
       .then(response => {
@@ -22,6 +22,8 @@ app.post("/credit", (req, res) => {
         console.log(err);
         res.status(500).send("There was an error while updating your balance");
       });
+  }else{
+    res.status(400).send("Bad request")
   }
 });
 

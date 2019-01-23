@@ -50,9 +50,9 @@ module.exports = {
   check: dbSelected => {
     let dbReturned;
     if (dbSelected == "primary") {
-      dbReturned = created.find(db => db.primary == true);
+      dbReturned = created.find(db => db.primary == true  && db.connected == true);
     } else if (dbSelected == "replica") {
-      dbReturned = created.find(db => db.primary == false);
+      dbReturned = created.find(db => db.primary == false  && db.connected == true);
     }
     return dbReturned.connection;
   },

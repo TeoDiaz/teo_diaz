@@ -18,9 +18,9 @@ const sendMessage = data => {
         console.log("Message saved on DataBase");
         updateMessage("replica", _id, "Message sent").then(message => {
           console.log("Also saved on Replica DataBase");
+          return true;
         });
       });
-      return true;
     })
     .catch(err => {
       if (err.response == undefined) {
@@ -36,9 +36,9 @@ const sendMessage = data => {
             "Timeout: Message Sent without confirmation"
           ).then(message => {
             console.log("Also saved on Replica DataBase");
+            return true;
           });
         });
-        return true;
       } else {
         console.log(err.response);
         updateMessage("primary", _id, "Error sending message").then(message => {

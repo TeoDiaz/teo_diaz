@@ -6,5 +6,5 @@ module.exports = (req, res) => {
     .then(response =>
       res.send(`The status of your message is: ${response.status}`)
     )
-    .catch(err => res.send("Your ID doesn't correspond to any message"));
+    .catch(err => res.sendStatus(404))
 };
