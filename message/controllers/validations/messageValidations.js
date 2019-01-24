@@ -1,5 +1,4 @@
-const validated = (req, res) => {
-  const { destination, body } = req.body;
+const validated = (destination, body, res) => {
   if (destination == "" || body == "") {
     res.status(400).send("You can't provide an empty field");
     return false;
