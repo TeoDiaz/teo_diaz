@@ -10,7 +10,7 @@ const { REDIS_PORT } = process.env;
 const messageQueue = new Queue("charged-queue", `redis://${REDIS_PORT}`);
 const creditQueue = new Queue("credit-queue", `redis://${REDIS_PORT}`);
 const creditBackQueue = new Queue("creditBack-queue", `redis://${REDIS_PORT}`);
-
+const {MAX_JOBS, GOOD_JOBS} = process.env 
 let openQueue = true;
 
 const saveOnDatabase = (_id, destination, body) => {
@@ -53,9 +53,9 @@ messageQueue.process((job, done) => {
 
 const countingJobs = queue => {
   queue.count().then(num => {
-    if (num > 5) {
+    if (num >= MAX_JOBS) {
       openQueue = false;
-    } else {
+    } else if (num <= GOOD_JOBS) {
       openQueue = true;
     }
   });
