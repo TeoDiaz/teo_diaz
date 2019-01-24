@@ -10,7 +10,7 @@ const sendMessage = data => {
   return axios({
     method: "post",
     url: `${API_URL}`,
-    timeout: "5000",
+    timeout: "1000",
     data: { _id, destination, body }
   })
     .then(() => {
