@@ -1,31 +1,104 @@
 version: "3"
 services:
-  exercise5:
-    build: .
+  message:
+    build: message/
     ports:
       - "9001:9001"
     links:
       - messageapp
-      - mongodb
+      - mongodb_message
+      - replica_message
+      - redis
+      - credit
+    depends_on:
+      - messageapp
+      - mongodb_message
+      - replica_message
+      - redis
+  message2:
+    build: message/
+    ports:
+      - "9002:9001"
+    links:
+      - messageapp
+      - mongodb_message
+      - replica_message
+      - redis
+      - credit
+    depends_on:
+      - messageapp
+      - mongodb_message
+      - replica_message
+      - redis
+  message3:
+    build: message/
+    ports:
+      - "9003:9001"
+    links:
+      - messageapp
+      - mongodb_message
+      - replica_message
+      - redis
+      - credit
+    depends_on:
+      - messageapp
+      - mongodb_message
+      - replica_message
+      - redis
+  credit:
+    build: credit/
+    ports:
+      - "9017:9017"
+    links:
+      - mongodb_credit
+      - replica_credit
+      - redis
+    depends_on:
+      - mongodb_credit
+      - replica_credit
+      - redis
   messageapp:
-    image: cabify/backend-bootcamp-messageapp
+    image: cabify/backend-bootcamp-messageapp:exercise10
     ports:
       - "3000:3000"
+
+  mongodb_credit:
+    image: mongo
+    volumes:
+      - ./credit/data/db:/credit/data/db
+    ports:
+      - 27017:27017
+  replica_credit:
+    image: mongo
+    volumes:
+      - ./credit/data/replica:/credit/data/replica
+    ports:
+      - 27018:27017
+
+  mongodb_message:
+    image: mongo
+    volumes:
+      - ./message/data/db:/message/data/db
+    ports:
+      - 27027:27017
+  replica_message:
+    image: mongo
+    volumes:
+      - ./message/data/replica:/message/data/replica
+    ports:
+      - 27028:27017
   redis:
     image: redis
     ports:
-      - "6379:6379"
+      - 6379:6379
+  haproxy:
+    image: haproxy:latest
+    depends_on:
+      - message
+      - message2
+      - message3
+      - credit
     volumes:
-      - ../data/redis:/data
-  mongodb:
-    image: mongo
-    volumes:
-      - ./data/db:/data/db
+      - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
     ports:
-      - 27017:27017
-  mongodb_replica:
-    image: mongo
-    volumes:
-      - ./data/db2:/data/db
-    ports:
-      - 27019:27017
+      - 80:80
