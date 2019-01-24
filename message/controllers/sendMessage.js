@@ -15,6 +15,7 @@ const sendMessage = data => {
       return "Message sent";
     })
     .catch(err => {
+      console.log(err.response)
       if (err.reponse == undefined) {
         throw new Error("Timeout");
       } else {

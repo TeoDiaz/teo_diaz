@@ -8,8 +8,5 @@ const options = {
 
 const breaker = circuitBreaker(sendMessage, options);
 
-breaker.on("success", result =>
-  console.log(`SENT SUCCESFULLY`)
-);
 
 module.exports = breaker;

@@ -37,7 +37,8 @@ messageQueue.process((job, done) => {
       })
       .catch(err => {
         console.log(err)
-        if ((err.Error = "Timeout")) {
+        if ((err == "Error: Timeout")) {
+          console.log("Credit returned")
           creditBackQueue.add({ amount: 1 });
         }
         transactionUpdate(message._id, err).then(() => {
