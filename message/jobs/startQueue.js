@@ -2,10 +2,9 @@ require("dotenv").config();
 const Queue = require("bull");
 const uniqid = require("uniqid");
 
-const sendMessage = require("../controllers/sendMessage");
 const createMessage = require("../database/createMessage");
-const updateMessage = require("../controllers/updateMessage");
-
+const transactionUpdate = require("../controllers/transactionUpdate");
+const breaker = require('../controllers/breaker/breaker')
 const { REDIS_PORT } = process.env;
 
 const messageQueue = new Queue("charged-queue", `redis://${REDIS_PORT}`);
@@ -23,31 +22,42 @@ const saveOnDatabase = (_id, destination, body) => {
 const errorCredit = data => {
   const { _id } = data.message;
   const paidError = data.type;
-  return updateMessage("primary", _id, paidError).then(message => {
-    return updateMessage("replica", _id, paidError);
-  });
+  transactionUpdate(_id, paidError);
 };
 
 messageQueue.process((job, done) => {
+  const message = job.data.message;
   if (job.data.type == "OK") {
-    sendMessage(job.data.message).then(response => {
-      if (response) {
+    breaker.fire(message)
+      .then(response => {
+        return transactionUpdate(message._id, response);
+      })
+      .then(() => {
         done();
-      } else {
-        creditBackQueue.add({ amount: 1 });
-        done();
-      }
-    });
+      })
+      .catch(err => {
+        console.log(err)
+        if ((err.Error = "Timeout")) {
+          creditBackQueue.add({ amount: 1 });
+        }
+        transactionUpdate(message._id, err).then(() => {
+          done();
+        });
+      });
   } else {
     errorCredit(job.data).then(() => done());
   }
 });
 
+const setOnQueue = (_id, destination, body) => {
+  creditQueue.add({ _id, destination, body });
+};
+
 const startQueue = (req, res) => {
   const { destination, body } = req.body;
   const _id = uniqid();
   saveOnDatabase(_id, destination, body).then(() => {
-    creditQueue.add({ _id, destination, body });
+    setOnQueue(_id, destination, body);
     res.send({ messageID: _id });
   });
 };
