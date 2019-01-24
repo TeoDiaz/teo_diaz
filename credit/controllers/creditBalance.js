@@ -1,6 +1,6 @@
 const Credit = require("../Models/Credit");
 const updateCredit = require("../controllers/updateCredit");
-const createCredit = require("../database/createCredit");
+const createCredit = require("./createCredit");
 
 const creditBalance = {
   increase: req => {

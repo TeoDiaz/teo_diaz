@@ -1,8 +1,8 @@
 require("dotenv").config();
 
 const mongoose = require("mongoose");
-const primaryDB = process.env.MONGO_URL_PRIMARY;
-const replicaDB = process.env.MONGO_URL_REPLICA;
+const primaryDB = process.env.MONGO_CREDIT_URL_PRIMARY;
+const replicaDB = process.env.MONGO_CREDIT_URL_REPLICA;
 
 const connection = dbUrl => {
   return {
@@ -39,6 +39,7 @@ const checkConnected = (primaryDB, replica) => {
 
   primaryDB.connection.on("reconnected", () => {
     primaryDB.connected = true;
+    db.copyDatabase(secondDB,firstDB)
     console.log(`${primaryDB} reconnected`)
   });
 };
@@ -49,9 +50,9 @@ module.exports = {
   check: dbSelected => {
     let dbReturned;
     if (dbSelected == "primary") {
-      dbReturned = created.find(db => db.primary == true);
+      dbReturned = created.find(db => db.primary == true  && db.connected == true);
     } else if (dbSelected == "replica") {
-      dbReturned = created.find(db => db.primary == false);
+      dbReturned = created.find(db => db.primary == false  && db.connected == true);
     }
     return dbReturned.connection;
   },
