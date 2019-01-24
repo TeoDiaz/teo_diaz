@@ -4,12 +4,14 @@ const uniqid = require("uniqid");
 
 const createMessage = require("../database/createMessage");
 const transactionUpdate = require("../controllers/transactionUpdate");
-const breaker = require('../controllers/breaker/breaker')
+const breaker = require("../controllers/breaker/breaker");
 const { REDIS_PORT } = process.env;
 
 const messageQueue = new Queue("charged-queue", `redis://${REDIS_PORT}`);
 const creditQueue = new Queue("credit-queue", `redis://${REDIS_PORT}`);
 const creditBackQueue = new Queue("creditBack-queue", `redis://${REDIS_PORT}`);
+
+let openQueue = true;
 
 const saveOnDatabase = (_id, destination, body) => {
   return createMessage("primary", _id, destination, body, "pending").then(
@@ -28,7 +30,8 @@ const errorCredit = data => {
 messageQueue.process((job, done) => {
   const message = job.data.message;
   if (job.data.type == "OK") {
-    breaker.fire(message)
+    breaker
+      .fire(message)
       .then(response => {
         return transactionUpdate(message._id, response);
       })
@@ -36,9 +39,7 @@ messageQueue.process((job, done) => {
         done();
       })
       .catch(err => {
-        console.log(err)
-        if ((err == "Error: Timeout")) {
-          console.log("Credit returned")
+        if (err != "Error: Timeout") {
           creditBackQueue.add({ amount: 1 });
         }
         transactionUpdate(message._id, err).then(() => {
@@ -50,8 +51,24 @@ messageQueue.process((job, done) => {
   }
 });
 
+const countingJobs = queue => {
+  queue.count().then(num => {
+    if (num > 5) {
+      openQueue = false;
+    } else {
+      openQueue = true;
+    }
+  });
+};
+
 const setOnQueue = (_id, destination, body) => {
-  creditQueue.add({ _id, destination, body });
+  if (openQueue) {
+    creditQueue
+      .add({ _id, destination, body })
+      .then(() => countingJobs(creditBackQueue));
+  } else {
+    transactionUpdate(_id, "Message is busy, come back later");
+  }
 };
 
 const startQueue = (req, res) => {

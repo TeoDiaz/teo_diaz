@@ -8,10 +8,7 @@ const updateCredit = require("../controllers/updateCredit");
 
 const creditQueue = new Queue("credit-queue", `redis://${REDIS_PORT}`);
 const messageQueue = new Queue("charged-queue", `redis://${REDIS_PORT}`);
-const creditBackQueue = new Queue(
-  "creditBack-queue",
-  `redis://${REDIS_PORT}`
-);
+const creditBackQueue = new Queue("creditBack-queue", `redis://${REDIS_PORT}`);
 
 creditQueue.process((job, done) => {
   checkCredit().then(paidRes => {
@@ -22,5 +19,5 @@ creditQueue.process((job, done) => {
 
 creditBackQueue.process((job, done) => {
   const req = { body: { amount: job.data.amount } };
-  updateCredit(req).then(()=>done())
+  updateCredit(req).then(() => done());
 });
