@@ -1,5 +1,6 @@
 const circuitBreaker = require("opossum");
 const sendMessage = require("../sendMessage");
+
 const options = {
   timeout: 10000,
   errorThresholdPercentage: 50,

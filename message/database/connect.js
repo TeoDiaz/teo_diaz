@@ -4,9 +4,9 @@ const mongoose = require("mongoose");
 const primaryDB = process.env.MONGO_MESSAGE_URL_PRIMARY;
 const replicaDB = process.env.MONGO_MESSAGE_URL_REPLICA;
 
-const connection = dbUrl => {
+const connection = (dbUrl, primary=false) => {
   return {
-    primary: false,
+    primary,
     connected: true,
     connection: mongoose.createConnection(dbUrl, {
       useNewUrlParser: true
@@ -17,10 +17,10 @@ const connection = dbUrl => {
 let created = [];
 
 creatingConnection = () => {
-  created = [connection(primaryDB), connection(replicaDB)];
-  created[0].primary = true;
+  created = [connection(primaryDB,true), connection(replicaDB)];
   checkConnected(created[0], created[1]);
   checkConnected(created[1], created[0]);
+  
   created.forEach(connect => {
     connect.connection.on("connected", () => {
       console.log("Correct conexion");
