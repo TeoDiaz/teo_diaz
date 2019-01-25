@@ -1,9 +1,8 @@
-const Credit = require("../Models/Credit");
-const updateCredit = require("../controllers/updateCredit");
+const updateCredit = require("./updateCredit");
+const getCredit = require('../database/getCredit')
 
 const checkCredit = () => {
-  return Credit("primary")
-    .find()
+  return getCredit()
     .then(credit => {
       if (credit.length > 0) {
         if (credit[0].amount > 0) {
