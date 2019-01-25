@@ -1,4 +1,4 @@
-const getMessages = require("../clients/getMessages");
+const getMessages = require("../database/getMessages");
 
 module.exports = res => {
   getMessages()

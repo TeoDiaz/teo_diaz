@@ -4,7 +4,7 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const getMessages = require("./controllers/getMessages");
-const startQueue = require("./jobs/startQueue");
+const sendMessage = require("./controllers/sendMessage");
 const getStatus = require('./controllers/getStatus')
 const checkHealth = require('./controllers/checkHealth')
 
@@ -17,7 +17,7 @@ app.get("/", (req, res) =>
 
 app.get("/messages", (req, res) => getMessages(res));
 
-app.post("/messages", (req, res) => startQueue(req, res));
+app.post("/messages", (req, res) => sendMessage(req, res));
 
 app.get("/messages/:id/status", (req, res) => getStatus(req,res));
 

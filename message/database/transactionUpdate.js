@@ -1,4 +1,4 @@
-const updateMessage = require("../controllers/updateMessage");
+const updateMessage = require("./updateMessage");
 
 const transactionUpdate = (_id, status) => {
   return updateMessage("primary", _id, status).then(() => {

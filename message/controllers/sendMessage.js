@@ -1,26 +1,22 @@
-require("dotenv").config();
+const setOnQueue = require('../jobs/setOnQueue')
+const createMessage = require("../database/createMessage");
+const uniqid = require("uniqid");
 
-const axios = require("axios");
-const { API_URL } = process.env;
-
-const sendMessage = data => {
-  const { _id, destination, body } = data;
-  return axios({
-    method: "post",
-    url: `${API_URL}`,
-    timeout: "3000",
-    data: { _id, destination, body }
-  })
-    .then(() => {
-      return "Message sent";
-    })
-    .catch(err => {
-      if (err.response == undefined) {
-        throw new Error("Timeout");
-      } else {
-        throw new Error("Error sending message");
-      }
-    });
+const saveOnDatabase = (_id, destination, body) => {
+  return createMessage("primary", _id, destination, body, "pending").then(
+    () => {
+      return createMessage("replica", _id, destination, body, "pending");
+    }
+  );
 };
 
-module.exports = sendMessage;
+const startQueue = (req, res) => {
+  const { destination, body } = req.body;
+  const _id = uniqid();
+  saveOnDatabase(_id, destination, body).then(() => {
+    setOnQueue(_id, destination, body);
+    res.send({ messageID: _id });
+  });
+};
+
+module.exports = startQueue

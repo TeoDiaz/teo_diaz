@@ -1,5 +1,5 @@
 const circuitBreaker = require("opossum");
-const sendMessage = require("../sendMessage");
+const messageapp = require("../messageapp");
 
 const options = {
   timeout: 10000,
@@ -7,7 +7,7 @@ const options = {
   resetTimeout: 3000
 };
 
-const breaker = circuitBreaker(sendMessage, options);
+const breaker = circuitBreaker(messageapp, options);
 
 breaker.on("open", () => console.log("Breaker is open"));
 breaker.on("success", () => console.log("Job success"));

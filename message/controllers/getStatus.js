@@ -1,4 +1,4 @@
-const getStatus = require("../clients/getStatus");
+const getStatus = require("../database/getStatus");
 
 module.exports = (req, res) => {
   const { id } = req.params;
