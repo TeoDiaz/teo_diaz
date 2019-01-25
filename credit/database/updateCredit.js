@@ -1,6 +1,6 @@
 const Credit = require("../Models/Credit");
-const connect = require("../database/connect");
-const getCredit = require("../database/getCredit");
+const connect = require("./connect");
+const getCredit = require("./getCredit");
 
 const updateCredit = data => {
   let oldCredit;
@@ -20,7 +20,6 @@ const updateCredit = data => {
         }
       })
       .then(() => {
-        console.log("CREA LA REPLICA");
         return Credit("replica")
           .findOneAndUpdate({}, { $inc: { amount } }, { new: true })
           .then(credit => {
