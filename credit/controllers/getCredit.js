@@ -1,4 +1,5 @@
 const getCredit = require("../database/getCredit");
+const logger = require("../logger");
 
 module.exports = res => {
   getCredit()
