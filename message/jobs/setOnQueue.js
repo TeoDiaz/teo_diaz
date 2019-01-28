@@ -4,6 +4,7 @@ const Queue = require("bull");
 const transactionUpdate = require("../database/transactionUpdate");
 const breaker = require("../clients/breaker/breaker");
 const { REDIS_PORT } = process.env;
+const logger = require("../logger");
 
 const messageQueue = new Queue("charged-queue", `redis://${REDIS_PORT}`);
 const creditQueue = new Queue("credit-queue", `redis://${REDIS_PORT}`);
