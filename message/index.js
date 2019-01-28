@@ -27,9 +27,10 @@ app.get("/messages/:id/status", (req, res) => getStatus(req, res));
 
 app.get("/health", (req, res) => checkHealth(res));
 
-app.get("/metrics", (req, res) => Prometheus.getMetrics())
+app.get("/metrics", (req, res) => Prometheus.getMetrics());
 
-app.use(Prometheus.responseCounters)
+app.use(Prometheus.responseCounters);
+app.use(Prometheus.requestCounters);
 
 const { PORT_MESSAGE } = process.env;
 
