@@ -13,7 +13,6 @@ const logger = require("./logger");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-
 Prometheus.startCollection();
 
 app.get("/", (req, res) =>
@@ -29,6 +28,8 @@ app.get("/messages/:id/status", (req, res) => getStatus(req, res));
 app.get("/health", (req, res) => checkHealth(res));
 
 app.get("/metrics", (req, res) => Prometheus.getMetrics())
+
+app.use(Prometheus.responseCounters)
 
 const { PORT_MESSAGE } = process.env;
 

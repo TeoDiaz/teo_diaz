@@ -1,4 +1,4 @@
-const Register = require('prom-client').register;
+const Register = require("prom-client").register;
 const Counter = require("prom-client").Counter;
 const Summary = require("prom-client").Summary;
 const ResponseTime = require("response-time");
@@ -16,7 +16,7 @@ const pathsTaken = new Counter({
   labelNames: ["path"]
 });
 
-const responses  = new Summary({
+const responses = new Summary({
   name: "responses",
   help: "Response time in millis",
   labelNames: ["method", "path", "status"]
@@ -29,6 +29,12 @@ const requestCounters = (req, res) => {
   }
 };
 
+const responseCounters = ResponseTime(function(req, res, time) {
+  if (req.url != "/metrics") {
+    responses.labels(req.method, req.url, res.statusCode).observe(time);
+  }
+});
+
 const startCollection = () => {
   logger.info(
     `Starting the collection of metrics, the metrics are available on /metrics`
@@ -37,8 +43,8 @@ const startCollection = () => {
 };
 
 const getMetrics = () => {
-    res.set("Content-Type", Register.contentType);
-    res.end(Register.metrics());
+  res.set("Content-Type", Register.contentType);
+  res.end(Register.metrics());
 };
 
 module.exports = {
@@ -46,6 +52,7 @@ module.exports = {
   pathsTaken,
   responses,
   requestCounters,
+  responseCounters,
   startCollection,
   getMetrics
 };
