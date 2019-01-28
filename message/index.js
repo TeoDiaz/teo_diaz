@@ -7,7 +7,7 @@ const getMessages = require("./controllers/getMessages");
 const sendMessage = require("./controllers/sendMessage");
 const getStatus = require("./controllers/getStatus");
 const checkHealth = require("./controllers/checkHealth");
-const Prometheus = require("./getMetrics");
+const Prometheus = require("./getMetricsProm");
 const logger = require("./logger");
 
 app.use(bodyParser.urlencoded({ extended: false }));

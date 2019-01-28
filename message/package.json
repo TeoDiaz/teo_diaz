@@ -18,6 +18,7 @@
     "dotenv": "^6.2.0",
     "express": "^4.16.3",
     "express-json-validator-middleware": "^1.2.3",
+    "jaeger-client": "^3.14.4",
     "mongodb": "^3.1.10",
     "mongoose": "^5.3.4",
     "opossum": "^1.9.0",
