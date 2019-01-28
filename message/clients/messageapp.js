@@ -16,9 +16,9 @@ const sendMessage = data => {
     })
     .catch(err => {
       if (err.response == undefined) {
-        throw new Error("Error: Tiemout");
+        throw new Error("Error: Tiemout in Messageapp");
       } else {
-        throw new Error("Error sending message");
+        throw new Error("Error sending message with Messageapp");
       }
     });
 };

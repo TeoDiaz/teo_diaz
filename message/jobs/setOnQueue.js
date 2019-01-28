@@ -11,6 +11,7 @@ const creditBackQueue = new Queue("creditBack-queue", `redis://${REDIS_PORT}`);
 
 const { MAX_JOBS, GOOD_JOBS } = process.env;
 let openQueue = true;
+let prevNum = 0;
 
 const errorCredit = data => {
   const { _id } = data.message;
@@ -27,11 +28,15 @@ messageQueue.process((job, done) => {
         return transactionUpdate(message._id, response);
       })
       .then(() => {
+        logger.info("Message sent succesfully");
         done();
       })
       .catch(err => {
         if (err != "Error: Timeout") {
           creditBackQueue.add({ amount: 1 });
+          logger.error(`${err}`);
+        } else {
+          logger.error(`${err}`);
         }
         transactionUpdate(message._id, err).then(() => {
           done();
@@ -42,13 +47,26 @@ messageQueue.process((job, done) => {
   }
 });
 
+const increasing = num => {
+  prevNum++;
+  if (prevNum < num) {
+    prevNum = num;
+    if (prevNum > 7) {
+      logger.warn("Queue is getting busy");
+    }
+  } else {
+    prevNum = 0;
+  }
+};
+
 const countingJobs = queue => {
   return queue.count().then(num => {
+    increasing(num);
     if (num >= MAX_JOBS) {
-      console.log("Queue busy");
+      logger.error("The sending queue is busy I'm not accepting more request");
       openQueue = false;
     } else if (num <= GOOD_JOBS) {
-      console.log("Back to paradise");
+      logger.info("Queue stack back to normal activity");
       openQueue = true;
     }
   });
