@@ -41,21 +41,23 @@ messageQueue.process((job, done) => {
   }
 });
 
-const countingJobs = queue => {
+const checkJobs = queue => {
   return queue.count().then(num => {
     if (num >= MAX_JOBS) {
       console.log("Queue busy");
-      return;
-    } else if (num <= GOOD_JOBS && openQueue == false) {
+      return false;
+    } else if (num <= GOOD_JOBS) {
       console.log("Back to paradise");
-      return queue;
+      return true;
+    } else {
+      return true;
     }
   });
 };
 
 const setOnQueue = (_id, destination, body) => {
-  countingJobs(creditQueue).then(queue => {
-    if (queue) {
+  checkJobs(creditQueue).then(isOpenQueue => {
+    if (isOpenQueue) {
       creditQueue.add({ _id, destination, body });
     } else {
       transactionUpdate(_id, "Message is busy, come back later");
