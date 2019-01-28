@@ -10,6 +10,7 @@ const creditQueue = new Queue("credit-queue", `redis://${REDIS_PORT}`);
 const creditBackQueue = new Queue("creditBack-queue", `redis://${REDIS_PORT}`);
 
 const { MAX_JOBS, GOOD_JOBS } = process.env;
+let openQueue = true;
 
 const errorCredit = data => {
   const { _id } = data.message;
@@ -43,21 +44,19 @@ messageQueue.process((job, done) => {
 
 const countingJobs = queue => {
   return queue.count().then(num => {
-    let openQueue = true;
     if (num >= MAX_JOBS) {
       console.log("Queue busy");
-      return openQueue;
+      openQueue = false;
     } else if (num <= GOOD_JOBS) {
       console.log("Back to paradise");
       openQueue = true;
     }
-    return openQueue;
   });
 };
 
 const setOnQueue = (_id, destination, body) => {
-  countingJobs(creditQueue).then(isOpen => {
-    if (isOpen) {
+  countingJobs(creditQueue).then(() => {
+    if (openQueue) {
       creditQueue.add({ _id, destination, body });
     } else {
       transactionUpdate(_id, "Message is busy, come back later");
