@@ -23,27 +23,26 @@ const responses = new Summary({
 });
 
 const requestCounters = (req, res, next) => {
-  if (req.path != "/metrics") {
-    numOfRequests.inc({ method: req.method });
-    pathsTaken.inc({ path: req.path });
-  }
+  numOfRequests.inc({ method: req.method });
+  pathsTaken.inc({ path: req.path });
+
   next();
 };
 
 const responseCounters = ResponseTime(function(req, res, time) {
-  if (req.url != "/metrics") {
-    responses.labels(req.method, req.url, res.statusCode).observe(time);
-  }
+  responses.labels(req.method, req.url, res.statusCode).observe(time);
 });
 
 const startCollection = () => {
   logger.info(
     `Starting the collection of metrics, the metrics are available on /metrics`
   );
-  require("prom-client").collectDefaultMetrics();
+  require("prom-client").collectDefaultMetrics({
+    prefix: "message_default_metrix"
+  });
 };
 
-const getMetrics = () => {
+const getMetrics = res => {
   res.set("Content-Type", Register.contentType);
   res.end(Register.metrics());
 };

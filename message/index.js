@@ -17,16 +17,16 @@ app.get("/", (req, res) =>
   res.status(200).send("This is my first, 'Hello World'")
 );
 
+app.get("/health", (req, res) => checkHealth(res));
+
+app.use(Prometheus.requestCounters);
+app.use(Prometheus.responseCounters);
+
 app.get("/messages", (req, res) => getMessages(res));
 
 app.post("/messages", (req, res) => sendMessage(req, res));
 
 app.get("/messages/:id/status", (req, res) => getStatus(req, res));
-
-app.get("/health", (req, res) => checkHealth(res));
-
-app.use(Prometheus.responseCounters);
-app.use(Prometheus.requestCounters);
 
 app.get("/metrics", (req, res) => Prometheus.getMetrics(res));
 

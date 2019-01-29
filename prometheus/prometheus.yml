@@ -24,6 +24,6 @@ scrape_configs:
 
     # metrics_path defaults to '/metrics'
     # scheme defaults to 'http'.
-
+    metrics_path: /metrics
     static_configs:
       - targets: ["teo_diaz_message_1:9001"]
