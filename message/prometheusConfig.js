@@ -22,11 +22,12 @@ const responses = new Summary({
   labelNames: ["method", "path", "status"]
 });
 
-const requestCounters = (req, res) => {
+const requestCounters = (req, res, next) => {
   if (req.path != "/metrics") {
     numOfRequests.inc({ method: req.method });
     pathsTaken.inc({ path: req.path });
   }
+  next();
 };
 
 const responseCounters = ResponseTime(function(req, res, time) {
