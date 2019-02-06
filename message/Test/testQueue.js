@@ -8,7 +8,7 @@ const testQueue = () => {
 
   axios({
     method: "post",
-    url: "http://localhost:9001/messages",
+    url: "http://localhost:80/messages",
     timeout: "5000",
     json: true,
     headers: {
@@ -18,7 +18,7 @@ const testQueue = () => {
   })
 };
 
-for(let i =0;i<20;i++){
+for(let i =0;i<200;i++){
   testQueue();
 }
 

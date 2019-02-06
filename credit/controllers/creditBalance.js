@@ -1,19 +1,20 @@
 const Credit = require("../Models/Credit");
-const updateCredit = require("../controllers/updateCredit");
-const createCredit = require("./createCredit");
+const updateCredit = require("../database/updateCredit");
+const createCredit = require("../database/createCredit");
 
 const creditBalance = {
   increase: req => {
+    const data = req.body
     return Credit('primary').find().then(credit => {
-     return credit.length == 0 ? createCredit(req) :
+     return credit.length == 0 ? createCredit(data) :
       Credit('replica').find().then(credit =>{
-        return credit.length == 0 ? createCredit(req) : updateCredit(req);
+        return credit.length == 0 ? createCredit(data) : updateCredit(data);
       })
     });
   },
   creditMovements: (quantity) => {
-    const req = {body:{amount:quantity}}
-    updateCredit(req)
+    const data = {amount:quantity}
+    updateCredit(data)
    .then(credit=>{
      console.log("Amount modified")
     });

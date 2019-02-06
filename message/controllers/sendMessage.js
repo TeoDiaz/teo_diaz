@@ -1,60 +1,30 @@
-require("dotenv").config();
+const setOnQueue = require("../jobs/setOnQueue");
+const createMessage = require("../database/createMessage");
+const uniqid = require("uniqid");
+const logger = require("../logger");
 
-const axios = require("axios");
-const { API_URL } = process.env;
-
-const updateMessage = require("./updateMessage");
-
-const sendMessage = data => {
-  const { _id, destination, body } = data;
-  return axios({
-    method: "post",
-    url: `${API_URL}`,
-    timeout: "1000",
-    data: { _id, destination, body }
-  })
+const saveOnDatabase = (_id, destination, body) => {
+  return createMessage("primary", _id, destination, body, "pending")
     .then(() => {
-      return updateMessage("primary", _id, "Message sent");
-    })
-    .then(() => {
-      console.log("Saved on Primary Database");
-      return updateMessage("replica", _id, "Message sent");
-    })
-    .then(() => {
-      console.log("Also saved on Replica DataBase");
-      return true;
+      logger.info("Saved pending new message on Primary DB");
+      return createMessage("replica", _id, destination, body, "pending");
     })
     .catch(err => {
-      if (err.response == undefined) {
-        return updateMessage(
-          "primary",
-          _id,
-          "Timeout: Message Sent without confirmation"
-        )
-          .then(() => {
-            console.log("Message saved on DataBase");
-            updateMessage(
-              "replica",
-              _id,
-              "Timeout: Message Sent without confirmation"
-            );
-          })
-          .then(() => {
-            console.log("Also saved on Replica DataBase");
-            return true;
-          });
-      } else {
-        console.log(err.response);
-        return updateMessage("primary", _id, "Error sending message")
-          .then(() => {
-            console.log("Message saved on DataBase");
-            updateMessage("replica", _id, "Error sending message");
-          })
-          .then(() => {
-            console.log("Also saved on Replica DataBase");
-          });
-      }
+      logger.warning("Only saved on Primary Database");
     });
 };
 
-module.exports = sendMessage;
+const startQueue = (req, res) => {
+  const { destination, body } = req.body;
+  const _id = uniqid();
+  saveOnDatabase(_id, destination, body)
+    .then(() => {
+      setOnQueue(_id, destination, body);
+      res.send({ messageID: _id });
+    })
+    .catch(err => {
+      logger.error("Error while saving pending message");
+    });
+};
+
+module.exports = startQueue;
